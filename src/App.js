@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { Provider } from 'react-redux';
+import { DrizzleProvider } from 'drizzle-react'
 
 import './App.css';
 import Routes from './routes';
@@ -8,12 +8,18 @@ import store from './store';
 
 class App extends React.Component {
   render() {
+    const options = {
+      contracts: [
+
+      ]
+    };
+
     return (
-      <Provider store={store}>
+      <DrizzleProvider store={store} options={options}>
         <Router>
           <Routes />
         </Router>
-      </Provider>
+      </DrizzleProvider>
     );
   }
 }
