@@ -6085,6 +6085,12 @@ react-scripts@1.1.4:
   optionalDependencies:
     fsevents "^1.1.3"
 
+react-web3@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-web3/-/react-web3-1.0.0.tgz#e95ebcce2b1d0706ea24a8a44421cedbf5ffb0ad"
+  dependencies:
+    lodash "^4.17.4"
+
 react@^16.4.0:
   version "16.4.0"
   resolved "https://registry.yarnpkg.com/react/-/react-16.4.0.tgz#402c2db83335336fba1962c08b98c6272617d585"
