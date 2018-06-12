@@ -1,13 +1,27 @@
 import React from 'react';
 import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
 import PropTypes from 'prop-types';
 
-import { fetchContracts } from "../../redux/actions";
 
 class EatABetPage extends React.Component {
+  constructor(props){
+    super(props);
+
+    this.state = {
+      betPools: [],
+    }
+  }
+
   componentDidMount() {
-    this.props.fetchContracts();
+    const { contract } = this.props;
+    // contract.getBetPoolSize.then((size) => {
+    // })
+    // Missing getBEtPoolSize function
+    // const betPools = [];
+    // for (let i = 0; i < 1; i++) {
+    //   betPools.push(contract.betPools(i));
+    // }
+    // console.log(betPools);
   }
 
   render() {
@@ -24,13 +38,10 @@ EatABetPage.contextTypes = {
   web3: PropTypes.object
 };
 
-function mapDispatchToProps(dispatch) {
-  return {
-    fetchContracts: bindActionCreators(fetchContracts, dispatch),
-  }
-}
+const mapStateToProps = state => ({
+  contract: state.contract,
+});
 
 export default connect(
-  null,
-  mapDispatchToProps
+  mapStateToProps,
 )(EatABetPage);
