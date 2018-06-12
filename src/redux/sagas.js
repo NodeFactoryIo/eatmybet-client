@@ -1,14 +1,18 @@
-import { all, takeLatest, call, put, fork, getContext } from 'redux-saga/effects';
-
+import { all, takeLatest, call, put, fork } from 'redux-saga/effects';
+import truffleContract from 'truffle-contract';
 import actions from './actions';
 import { fetchContracts } from "./api";
 
 function* contract() {
-  yield takeLatest(actions.FETCHING_CONTRACTS, function* (action) {
+  yield takeLatest(actions.FETCHING_CONTRACTS, function* () {
     try {
       const data = yield call(fetchContracts);
 
-      console.log(data);
+      const contract = truffleContract(data.EatMyBetContract);
+      contract.setProvider(window.web3.currentProvider);
+      const eatMyBetContract = yield call(contract.deployed);
+
+      yield put({type: actions.FETCH_CONTRACTS_SUCCESS, data: eatMyBetContract });
     } catch (e) {
       yield put({type: actions.ERROR, message: e.message});
     }

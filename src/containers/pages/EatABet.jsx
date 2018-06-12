@@ -7,7 +7,6 @@ import { fetchContracts } from "../../redux/actions";
 
 class EatABetPage extends React.Component {
   componentDidMount() {
-
     this.props.fetchContracts();
   }
 
