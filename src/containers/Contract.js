@@ -12,7 +12,7 @@ class ContractLoader extends React.Component {
 
   render() {
     const { contract } = this.props;
-    return _.isEmpty(contract) ? 'Loading...' : React.Children.only(this.props.children);
+    return _.isEmpty(contract) ? 'Loading...' : this.props.children;
   }
 }
 

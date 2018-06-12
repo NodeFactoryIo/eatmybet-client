@@ -11,6 +11,15 @@ function contract(state = {}, action) {
   }
 }
 
+function games(state = [], action) {
+  switch (action.type) {
+    case actions.FETCH_GAMES_SUCCESS:
+      return action.data;
+    default:
+      return state;
+  }
+}
+
 function error(state = {}, action) {
   switch (action.type){
     case actions.ERROR:
@@ -22,5 +31,6 @@ function error(state = {}, action) {
 
 export default combineReducers({
   contract,
+  games,
   error,
 });

@@ -5,9 +5,9 @@ import { connect } from "react-redux";
 class PlaceABetPage extends React.Component {
   placeBet() {
     const { contract } = this.props;
-    const matchId;
-    const bet; // 0, 1 - x, 2
-    const coef;
+    let matchId;
+    let bet; // 0, 1 - x, 2
+    let coef;
     contract.makeBet(matchId, bet, coef);
   }
 

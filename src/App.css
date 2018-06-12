@@ -1,9 +1,58 @@
+/* Eric Meyer's Reset CSS v2.0 - http://cssreset.com */
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{border:0;font-size:100%;font:inherit;vertical-align:baseline;margin:0;padding:0}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:none}table{border-collapse:collapse;border-spacing:0}
+
+/*
+  Simple Grid
+  Learn More - http://dallasbass.com/simple-grid-a-lightweight-responsive-css-grid/
+  Project Page - http://thisisdallas.github.com/Simple-Grid/
+  Author - Dallas Bass
+  Site - dallasbass.com
+*/
+*,:after,:before{box-sizing:border-box}body{margin:0}[class*=col-]{float:left;padding-left:17px;padding-right:17px; margin-bottom: 34px;}.grid{width:auto;}.grid:after{content:"";display:table;clear:both}.grid-pad{margin:0 -17px}.push-right{float:right}.col-1-1{width:100%}.col-2-3,.col-4-6,.col-8-12{width:66.66%}.col-1-2,.col-6-12{width:50%}.col-2-5{width:40%;}.col-1-3,.col-4-12{width:33.33%}.col-1-4,.col-3-12{width:25%}.col-1-5{width:20%}.col-1-6,.col-2-12{width:16.667%}.col-1-7{width:14.28%}.col-5-7{width:71.43%}.col-1-8{width:12.5%}.col-1-9{width:11.1%}.col-4-9{width:44.44%}.col-1-10{width:10%}.col-1-11{width:9.09%}.col-1-12{width:8.33%}.col-11-12{width:91.66%}.col-10-12{width:83.333%}.col-3-4,.col-9-12{width:75%}.col-5-12{width:41.66%}.col-7-12{width:58.33%}.push-2-3,.push-8-12{margin-left:66.66%}.push-1-2,.push-6-12{margin-left:50%}.push-1-3,.push-4-12{margin-left:33.33%}.push-1-4,.push-3-12{margin-left:25%}.push-1-5{margin-left:20%}.push-1-6,.push-2-12{margin-left:16.667%}.push-1-7{margin-left:14.28%}.push-1-8{margin-left:12.5%}.push-1-9{margin-left:11.1%}.push-1-10{margin-left:10%}.push-1-11{margin-left:9.09%}.push-1-12{margin-left:8.33%}@media handheld,only screen and (max-width:760px) {.grid{width:100%;min-width:0;margin-left:0;margin-right:0;padding-left:20px;padding-right:10px}[class*=col-]{width:auto;float:none;margin:10px 0;padding-left:0;padding-right:10px}[class*=tablet-col-]{float:left;margin:0 0 10px;padding-left:0;padding-right:10px;padding-bottom:0}.tablet-col-1-1{width:100%}.tablet-col-2-3,.tablet-col-8-12{width:66.66%}.tablet-col-1-2,.tablet-col-6-12{width:50%}.tablet-col-2-5{width:40%;}.tablet-col-1-3,.tablet-col-4-12{width:33.33%}.tablet-col-1-4,.tablet-col-3-12{width:25%}.tablet-col-1-5{width:20%}.tablet-col-1-6,.tablet-col-2-12{width:16.667%}.tablet-col-1-7{width:14.28%}.tablet-col-1-8{width:12.5%}.tablet-col-1-9{width:11.1%}.tablet-col-4-9{width:44.44%}.tablet-col-1-10{width:10%}.tablet-col-1-11{width:9.09%}.tablet-col-1-12{width:8.33%}.tablet-col-11-12{width:91.66%}.tablet-col-10-12{width:83.333%}.tablet-col-9-12{width:75%}.tablet-col-5-12{width:41.66%}.tablet-col-7-12{width:58.33%}.hide-on-tablet{display:none!important;width:0;height:0}}@media handheld,only screen and (max-width:460px){.grid{width:100%;min-width:0;margin-left:0;margin-right:0;padding-left:20px;padding-right:10px}[class*=col-]{width:auto;float:none;margin:10px 0;padding-left:0;padding-right:10px}[class*=mobile-col-]{float:left;margin:0 0 10px;padding-left:0;padding-right:10px;padding-bottom:0}.mobile-col-1-1{width:100%}.mobile-col-2-3,.mobile-col-8-12{width:66.66%}.mobile-col-1-2,.mobile-col-6-12{width:50%}.mobile-col-2-5{width:40%;}.mobile-col-1-3,.mobile-col-4-12{width:33.33%}.mobile-col-1-4,.mobile-col-3-12{width:25%}.mobile-col-1-5{width:20%}.mobile-col-1-6,.mobile-col-2-12{width:16.667%}.mobile-col-1-7{width:14.28%}.mobile-col-1-8{width:12.5%}.mobile-col-1-9{width:11.1%}.mobile-col-4-9{width:44.44%}.mobile-col-1-10{width:10%}.mobile-col-1-11{width:9.09%}.mobile-col-1-12{width:8.33%}.mobile-col-11-12{width:91.66%}.mobile-col-10-12{width:83.333%}.mobile-col-9-12{width:75%}.mobile-col-5-12{width:41.66%}.mobile-col-7-12{width:58.33%}.hide-on-mobile{display:none!important;width:0;height:0}}
+
+  .grid-pad-small [class*=col-]{padding-left:10px;padding-right:10px; margin-bottom: 25px;}#content .grid-pad-small{margin:0 -10px}
+    @media handheld,only screen and (min-width:760px) {
+        .hide-on-desktop { display: none!important;width: 0;height: 0; }
+    }
+
+.clearfix:before, .clearfix:after { content: " "; display: table; }
+.clearfix:after { clear: both; }
+/* IE 6/7 */ .clearfix { *zoom: 1; }
+
+h1 { font-size: 250%; }
+h2 { font-size: 200%; }
+h3 { font-size: 150%; }
+h4 { font-size: 120%; }
+h5 { font-size: 100%; font-weight: bold; }
+small { font-size: 60%; }
+
+button, .button { border:none; border-radius: 2px; display: inline-block; text-decoration: none; }
+  button:focus, .button:focus { outline:0; }
+  button:hover, .button:hover { cursor: pointer; }
+  button.eat, .button.eat { background-color: #CC668A; color: #000; }
+  button.place, .button.place { background-color: #0D87C0; color: #fff; }
+
+.align-left { text-align: left; }
+.align-right { text-align: right; }
+.align-center { text-align: center; }
+
+
+html, body { font-size: 12px; font-family: sans-serif; width: 100%; color: #0F5778; }
+
+.landing { width: 100%; text-align: center; margin: 4rem 0 0; }
+  .landing .logo { max-width: 50%; margin: 0 0 4rem; } /*animation: App-logo-spin infinite 20s linear; */
+  .landing h1 { margin: 0 0 4rem; }
+  .landing h2 { margin: 0 0 2rem; }
+  .landing .actions {}
+    .landing .actions .button { font-size: 200%; padding: 1rem 3rem; }
+
+
 .App {
   text-align: center;
 }
 
 .App-logo {
-  animation: App-logo-spin infinite 20s linear;
+  
   height: 80px;
 }
 
