@@ -1,18 +1,11 @@
 import React from 'react';
-import { drizzleConnect } from 'drizzle-react';
-import {bindActionCreators} from "redux";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
 import { fetchContracts } from "../../redux/actions";
 
 class EatABetPage extends React.Component {
-  constructor(props, context) {
-    super(props);
-
-    this.drizzle = context.drizzle;
-  }
-
   componentDidMount() {
-    console.log(this.drizzle);
     this.props.fetchContracts();
   }
 
@@ -31,7 +24,7 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default drizzleConnect(EatABetPage,
+export default connect(
   null,
   mapDispatchToProps
-);
+)(EatABetPage);

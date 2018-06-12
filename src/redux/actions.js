@@ -4,9 +4,8 @@ const createPromise = (action) => (dispatch) => {
 
 const FETCHING_CONTRACTS = 'FETCHING_CONTRACTS';
 const FETCH_CONTRACTS_SUCCESS = 'FETCH_CONTRACTS_SUCCESS';
-export const fetchContracts = (drizzle) => ({
+export const fetchContracts = () => ({
   type: FETCHING_CONTRACTS,
-  drizzle
 });
 
 export default {

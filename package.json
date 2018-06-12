@@ -3,9 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "drizzle": "trufflesuite/drizzle",
-    "drizzle-react": "^1.1.1",
-    "drizzle-react-components": "^1.1.0",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
     "react-redux": "^5.0.7",
