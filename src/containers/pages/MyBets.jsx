@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import Header from '../Header';
 import PlaceABetList from '../PlaceABetList';
 
-class EatABetPage extends React.Component {
+class MyBetsPage extends React.Component {
   constructor(props){
     super(props);
 
@@ -16,7 +16,7 @@ class EatABetPage extends React.Component {
 
   componentDidMount() {
     const { contract } = this.props;
-    //contract.getBetPoolSize.then((size) => {
+    // contract.getBetPoolSize.then((size) => {
     // })
     // Missing getBEtPoolSize function
     // const betPools = [];
@@ -29,7 +29,7 @@ class EatABetPage extends React.Component {
   render() {
     console.log(this.context);
     return (
-      <div class="eat-a-bet-page">
+      <div class="my-bets-page">
         <Header />
         <PlaceABetList />
       </div>
@@ -37,7 +37,7 @@ class EatABetPage extends React.Component {
   }
 }
 
-EatABetPage.contextTypes = {
+MyBetsPage.contextTypes = {
   web3: PropTypes.object
 };
 
@@ -47,4 +47,4 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-)(EatABetPage);
+)(MyBetsPage);

@@ -2,8 +2,14 @@ import PropTypes from "prop-types";
 import React from 'react';
 import { connect } from "react-redux";
 
+import Header from '../Header';
+import PlaceABetList from '../PlaceABetList';
+
 class PlaceABetPage extends React.Component {
   placeBet() {
+
+    //let matchId = contract.getMatchId(gameId);
+
     const { contract } = this.props;
     let matchId;
     let bet; // 0, 1 - x, 2
@@ -13,8 +19,9 @@ class PlaceABetPage extends React.Component {
 
   render() {
     return (
-      <div>
-        <button onClick={() => this.placeBet()} />
+      <div class="place-a-bet-page">
+        <Header />
+        <PlaceABetList />
       </div>
     );
   }

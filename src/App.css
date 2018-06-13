@@ -27,9 +27,9 @@ h5 { font-size: 100%; font-weight: bold; }
 small { font-size: 60%; }
 
 button, .button { border:none; border-radius: 2px; display: inline-block; text-decoration: none; }
-  button:focus, .button:focus { outline:0; }
-  button:hover, .button:hover { cursor: pointer; }
-  button.eat, .button.eat { background-color: #CC668A; color: #000; }
+  button:focus, a.button:focus { outline:0; }
+  button:hover, a.button:hover { cursor: pointer; }
+  button.eat, .button.eat { background-color: #CC668A; color: #fff; }
   button.place, .button.place { background-color: #0D87C0; color: #fff; }
 
 .align-left { text-align: left; }
@@ -39,39 +39,58 @@ button, .button { border:none; border-radius: 2px; display: inline-block; text-d
 
 html, body { font-size: 12px; font-family: sans-serif; width: 100%; color: #0F5778; }
 
-.landing { width: 100%; text-align: center; margin: 4rem 0 0; }
-  .landing .logo { max-width: 50%; margin: 0 0 4rem; } /*animation: App-logo-spin infinite 20s linear; */
-  .landing h1 { margin: 0 0 4rem; }
-  .landing h2 { margin: 0 0 2rem; }
-  .landing .actions {}
-    .landing .actions .button { font-size: 200%; padding: 1rem 3rem; }
+.landing-page { width: 100%; text-align: center; margin: 4rem 0 0; }
+  .landing-page .logo { width: 50%; max-width: 700px; margin: 0 0 4rem; } /*animation: App-logo-spin infinite 20s linear; */
+  .landing-page h1 { margin: 0 0 4rem; }
+  .landing-page h2 { margin: 0 0 2rem; }
+  .landing-page .actions {}
+    .landing-page .actions .button { font-size: 200%; padding: 15px 36px 12px; border-radius: 6px; }
+
+.header { margin: 0 auto 4rem; height: 70px; box-shadow: 0px 2px 18px rgba(0,0,0,0.08); overflow: hidden; }
+  .header .content { max-width: 900px; margin: 0 auto; height: 100%; }
+    .header .content .logo { height: 50px; margin: 10px 2rem 0 0; display: inline-block; float: left; }
+      .header .content .logo img { height: 100%; }
+    .header .content a { font-size: 150%; font-weight: 500; display: inline-block; padding: 0 1rem; line-height: 62px; margin-top: 4px; text-decoration: none; }
+      .header .content a.place { color: #0D87C0; }
+        .header .content a.place:hover, .header .content a.place.active { border-bottom: 4px solid #0D87C0; }
+      .header .content a.eat { color: #CC668A; }
+        .header .content a.eat:hover, .header .content a.eat.active { border-bottom: 4px solid #CC668A; }
+      .header .content a.my-bets { color: #0f5778; } 
+        .header .content a.my-bets:hover, .header .content a.my-bets.active { border-bottom: 4px solid #0f5778; }
+      .header h1 {   }
+        .header h1.place { color: #0D87C0; }
+        .header h1.eat { color: #CC668A; }
+        .header h1 img { max-width: 60px; display: block; margin: 0 auto 1rem; }
 
 
-.App {
-  text-align: center;
-}
-
-.App-logo {
+.place-a-bet-wrap { max-width: 900px; margin: 0 auto; }
   
-  height: 80px;
-}
+  .place-a-bet-wrap .place-a-bet .grid-pad-small { margin: 0 -10px; }
+    .place-a-bet-wrap .place-a-bet [class*=col-] { margin-bottom: 0; }
 
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
-}
+  .place-a-bet-wrap .game { line-height: 2rem; font-size:1.5rem; margin: 0 0 2rem; box-shadow: 0px 2px 18px rgba(0,0,0,0.08); border-radius: 6px; white-space: nowrap; padding: 1rem; position: relative; }
+    
+    .place-a-bet-wrap .datetime { font-size: 1.2rem; color: #999da3; font-weight: 500; }
 
-.App-title {
-  font-size: 1.5em;
-}
+    .place-a-bet-wrap .game .flag { border-radius: 50%; border: 2px solid #fff; width: 35px; height: 35px; background-position: center center; background-size: cover; background-repeat: no-repeat; box-shadow: 0 0 6px 0 rgba(0,0,0,0.2); display: inline-block; float: 
+    left; margin-right: 12px; }
+      .place-a-bet-wrap .game .flag img { max-width: 100%; max-height: 100%; }
 
-.App-intro {
-  font-size: large;
-}
+  .place-a-bet-wrap .game .info .home, .place-a-bet-wrap .game .info .seperator, .place-a-bet-wrap .game .info .away { line-height: 35px;  }
+    .place-a-bet-wrap .game button { border: 1px solid #0D87C0; padding: 10px; display: block; font-size: 1.5rem; overflow: hidden; background: none; border-radius: 6px; text-align: left; width: 100%; }
+    .place-a-bet-wrap .game .info button.draw { text-align: center; line-height: 35px; }
+    .place-a-bet-wrap .game button:hover, .place-a-bet-wrap .game button.active { background-color:  #0D87C0; color: #fff; }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
+    .place-a-bet-wrap .game .action span { display: block; font-size: 1.2rem; }
+    .place-a-bet-wrap .game .action input { line-height: 22px; font-size: 15px; padding: 4px 6px; border-radius: 4px; border: 1px solid #999da3; }
+    .place-a-bet-wrap .game .action .place { color: #0D87C0; text-align: center; line-height: 35px; }
+      .place-a-bet-wrap .game .action .place:hover, .place-a-bet-wrap .game .action .place.active { color: #fff; }
+
+  
+
+    .place-a-bet-wrap .game .actions { text-align: center; }
+
+  .place-a-bet-wrap input, .place-a-bet-wrap button { max-width: 100%; }
+
+
+    
