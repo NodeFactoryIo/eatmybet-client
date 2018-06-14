@@ -1,12 +1,7 @@
 import React from 'react';
 import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import PropTypes from 'prop-types';
 
 class Header extends React.Component {
-  constructor(props){
-    super(props);
-  }
 
   componentDidMount() {
   }
@@ -25,9 +20,6 @@ class Header extends React.Component {
     );
   }
 }
-
-const mapStateToProps = state => ({
-});
 
 export default connect(
 )(Header);

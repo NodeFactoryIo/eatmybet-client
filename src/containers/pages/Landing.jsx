@@ -1,12 +1,6 @@
 import React from 'react';
 import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
 import PropTypes from 'prop-types';
-import _ from 'lodash';
-
-import PlaceABetList from '../PlaceABetList';
-
-import { fetchContracts, fetchGames } from "../../redux/actions";
 
 
 class LandingPage extends React.Component {

@@ -2,10 +2,9 @@ import React from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import moment from 'moment';
 
-import { fetchContracts, fetchGames } from "../redux/actions";
+import { fetchGames } from "../redux/actions";
 
 
 class PlaceABetList extends React.Component {
@@ -35,7 +34,7 @@ class PlaceABetList extends React.Component {
   }
 
   componentDidMount() {
-    const { contract } = this.props;
+    //const { contract } = this.props;
     this.props.fetchGames();
   }
 
