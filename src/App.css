@@ -55,8 +55,8 @@ html, body { font-size: 12px; font-family: sans-serif; width: 100%; color: #0F57
         .header .content a.place:hover, .header .content a.place.active { border-bottom: 4px solid #0D87C0; }
       .header .content a.eat { color: #CC668A; }
         .header .content a.eat:hover, .header .content a.eat.active { border-bottom: 4px solid #CC668A; }
-      .header .content a.my-bets { color: #0f5778; } 
-        .header .content a.my-bets:hover, .header .content a.my-bets.active { border-bottom: 4px solid #0f5778; }
+      .header .content a.my-bets { color: #166f99; } 
+        .header .content a.my-bets:hover, .header .content a.my-bets.active { border-bottom: 4px solid #166f99; }
       .header h1 {   }
         .header h1.place { color: #0D87C0; }
         .header h1.eat { color: #CC668A; }

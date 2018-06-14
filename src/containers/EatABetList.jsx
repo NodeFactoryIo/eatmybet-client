@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import moment from 'moment';
 
 import { fetchContracts, fetchGames } from "../redux/actions";
@@ -92,7 +91,7 @@ class EatABetList extends React.Component {
               </div>
             </div>
             {bets.map(function(bet, index){
-              return <div className={"bet " + ((index == 0) ? 'first' : '')}>
+              return <div className={"bet " + ((index === 0) ? 'first' : '')}>
               <div class="grid grid-pad-small">
                   <div class="col-7-12">
                     <div class="grid grid-pad-small info"> 
@@ -100,17 +99,17 @@ class EatABetList extends React.Component {
                             &nbsp;
                         </div>
                         <div class="home push-1-12 col-2-12">
-                        <button className={"home " + (bet.outcome == 1 ? 'active' : 'inactive')}>
+                        <button className={"home " + (bet.outcome === 1 ? 'active' : 'inactive')}>
                             1
                         </button>
                         </div>
                         <div class="seperator push-1-12 col-2-12">
-                        <button className={"draw " + (bet.outcome == 2 ? 'active' : 'inactive')}>
+                        <button className={"draw " + (bet.outcome === 2 ? 'active' : 'inactive')}>
                             X
                         </button>
                         </div>
                         <div class="away push-1-12 col-2-12">
-                        <button className={"away " + (bet.outcome == 3 ? 'active' : 'inactive')}>
+                        <button className={"away " + (bet.outcome === 3 ? 'active' : 'inactive')}>
                             2
                         </button>
                         </div>
