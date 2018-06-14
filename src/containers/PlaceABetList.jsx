@@ -36,14 +36,14 @@ class PlaceABetList extends React.Component {
   }
 
   onCoefChange(gameId, e) {
-    const newCoef = parseInt(e.target.value);
+    const newCoef = parseInt(e.target.value, 10);
     const gameBet = this.getGameById(gameId);
     gameBet.coef = newCoef;
     this.setState({ bettingGames: {...this.state.bettingGames, [gameId]: gameBet } });
   }
 
   onAmountChange(gameId, e) {
-    const newAmount = parseInt(e.target.value);
+    // const newAmount = parseInt(e.target.value);
     const gameBet = this.getGameById(gameId);
     // Depending on the amount input convert to wei
     // TODO: Convert to wei and fix error

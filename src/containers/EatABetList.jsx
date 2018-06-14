@@ -22,17 +22,19 @@ class EatABetList extends React.Component {
   }
 
   placeBet() {
-    // let matchId = contract.getMatchId(gameId);
+    /*
+    let matchId = contract.getMatchId(gameId);
 
-    // const { contract } = this.props;
+    const { contract } = this.props;
     let matchId;
     let bet; // 0, 1 - x, 2
     let coef;
     contract.makeBet(matchId, bet, coef);
+    */
   }
 
   componentDidMount() {
-    const { contract } = this.props;
+    // const { contract } = this.props;
     this.props.fetchGames();
   }
 
