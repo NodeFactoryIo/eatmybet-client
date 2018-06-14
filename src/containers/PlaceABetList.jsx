@@ -16,7 +16,7 @@ class PlaceABetList extends React.Component {
       gameId: null,
       outcome: null,
       amount: null
-    }
+    };
 
     this.placeBet = this.placeBet.bind(this);
   }
