@@ -19,7 +19,7 @@ class PlaceABetPage extends React.Component {
 
   render() {
     return (
-      <div class="place-a-bet-page">
+      <div className="place-a-bet-page">
         <Header />
         <PlaceABetList />
       </div>

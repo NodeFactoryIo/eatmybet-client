@@ -1,20 +1,17 @@
 import React from 'react';
 import { connect } from "react-redux";
+import { NavLink } from "react-router-dom";
 
 class Header extends React.Component {
-
-  componentDidMount() {
-  }
-
   render() {
     return (
-      <div class="header">
-        <div class="content">
-          <a class="logo" href="/"><img src="./images/logo/logo-short.png" alt="EatMyBet" /></a>
+      <div className="header">
+        <div className="content">
+          <a className="logo" href="/"><img src="./images/logo/logo-short.png" alt="EatMyBet" /></a>
 
-          <a class="place" href="/place-a-bet">Place a bet</a>
-          <a class="eat" href="/eat-a-bet">Eat a bet</a>
-          <a class="my-bets" href="/my-bets">My bets</a>
+          <NavLink activeClassName="active" className="place" to="/place-a-bet">Place a bet</NavLink>
+          <NavLink activeClassName="active" className="eat" to="/eat-a-bet">Eat a bet</NavLink>
+          <NavLink activeClassName="active" className="my-bets" to="/my-bets">My bets</NavLink>
         </div>
       </div>
     );
