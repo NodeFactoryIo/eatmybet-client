@@ -45,54 +45,55 @@ class PlaceABetList extends React.Component {
     // onChange={(value) => this.setState({ amount: value })}
     
     return (
-      <div class="place-a-bet-wrap">
+      <div className="place-a-bet-wrap">
         {games.map(function(game, index){
-          return <div class="place-a-bet game">
-            <div class="grid grid-pad-small">
-              <div class="col-7-12">
-                <div class="grid grid-pad-small info"> 
-                  <div class="datetime col-2-12">
-                    <span class="date">{ moment.utc(game.dateTime).local().format('DD.MM.YYYY') }</span><br/>  
-                    <span class="time">{ moment.utc(game.dateTime).local().format('HH:mm') }</span>
+          return (
+          <div className="place-a-bet game" key={index}>
+            <div className="grid grid-pad-small">
+              <div className="col-7-12">
+                <div className="grid grid-pad-small info"> 
+                  <div className="datetime col-2-12">
+                    <span className="date">{ moment.utc(game.dateTime).local().format('DD.MM.YYYY') }</span><br/>  
+                    <span className="time">{ moment.utc(game.dateTime).local().format('HH:mm') }</span>
                   </div>
-                  <div class="home col-4-12">
-                    <button class="action home">
-                      <div class="flag" style={{ backgroundImage: 'url(/images/flags/' + game.homeTeamNameShort + '.png'  }}></div>
+                  <div className="home col-4-12">
+                    <button className="action home">
+                      <div className="flag" style={{ backgroundImage: 'url(/images/flags/' + game.homeTeamNameShort + '.png'  }}></div>
                       {game.homeTeamNameShort}
                     </button>
                   </div>
-                  <div class="seperator col-2-12">
-                    <button class="action draw">
+                  <div className="seperator col-2-12">
+                    <button className="action draw">
                       X
                     </button>
                   </div>
-                  <div class="away col-4-12">
-                    <button class="action away">
-                      <div class="flag" style={{ backgroundImage: 'url(/images/flags/' + game.awayTeamNameShort + '.png'  }}></div>
+                  <div className="away col-4-12">
+                    <button className="action away">
+                      <div className="flag" style={{ backgroundImage: 'url(/images/flags/' + game.awayTeamNameShort + '.png'  }}></div>
                       {game.awayTeamNameShort}
                     </button>
                   </div>
                 </div>
               </div>
-              <div class="action col-1-4">
-                <div class="grid grid-pad-small info"> 
-                    <div class="col-6-12">
+              <div className="action col-1-4">
+                <div className="grid grid-pad-small info"> 
+                    <div className="col-6-12">
                       <span>Odd</span>
                       <input type="text" />
                     </div>
-                    <div class="col-6-12">
+                    <div className="col-6-12">
                       <span>Amount</span>
                       <input type="text" />
                     </div>
                   </div>
                 
               </div>
-              <div class="action col-1-6">
-                <button class="place">Place bet</button>
+              <div className="action col-1-6">
+                <button className="place">Place bet</button>
               </div>
             </div>
-          </div>;
-        })}
+          </div>
+        )})}
       </div>
     );
   }
