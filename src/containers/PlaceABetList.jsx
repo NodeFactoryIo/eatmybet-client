@@ -36,19 +36,18 @@ class PlaceABetList extends React.Component {
   }
 
   onCoefChange(gameId, e) {
-    const newCoef = parseInt(e.target.value, 10);
+    const newCoef = parseInt(e.target.value);
     const gameBet = this.getGameById(gameId);
     gameBet.coef = newCoef;
     this.setState({ bettingGames: {...this.state.bettingGames, [gameId]: gameBet } });
   }
 
   onAmountChange(gameId, e) {
-    // const newAmount = parseInt(e.target.value);
+    const { web3 } = this.props;
+    const newAmount = e.target.value;
     const gameBet = this.getGameById(gameId);
     // Depending on the amount input convert to wei
-    // TODO: Convert to wei and fix error
-    // gameBet.amount = web3.utils.toWei(newAmount); // convert to bignumber?
-    gameBet.amount = 100000000000000000;
+    gameBet.amount = web3.utils.toWei(newAmount, 'ether');
     this.setState({ bettingGames: {...this.state.bettingGames, [gameId]: gameBet } });
   }
 
@@ -66,10 +65,6 @@ class PlaceABetList extends React.Component {
 
   render() {
     const { games } = this.props;
-    console.log(this.state);
-
-    // onChange={(value) => this.setState({ outcome: value })}
-    // onChange={(value) => this.setState({ amount: value })}
     
     return (
       <div className="place-a-bet-wrap">
