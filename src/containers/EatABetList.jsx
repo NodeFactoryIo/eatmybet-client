@@ -4,7 +4,7 @@ import { bindActionCreators } from "redux";
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
-import { fetchContracts, fetchGames } from "../redux/actions";
+import { fetchGames } from "../redux/actions";
 
 
 class EatABetList extends React.Component {
@@ -22,11 +22,9 @@ class EatABetList extends React.Component {
   }
 
   placeBet() {
+    // let matchId = contract.getMatchId(gameId);
 
-    //console.log(this.state.outcome)
-    //let matchId = contract.getMatchId(gameId);
-
-    const { contract } = this.props;
+    // const { contract } = this.props;
     let matchId;
     let bet; // 0, 1 - x, 2
     let coef;
