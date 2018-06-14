@@ -13,7 +13,7 @@ class LandingPage extends React.Component {
   }
 
   componentDidMount() {
-    const { contract } = this.props;
+    //const { contract } = this.props;
     //this.props.fetchGames();
   }
 
