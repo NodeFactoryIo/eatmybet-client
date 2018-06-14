@@ -1,0 +1,73 @@
+# Javascript Node CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+#
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:8.4
+    working_directory: ~/workspace
+    steps:
+      - checkout
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+      #- run: cp "src/config.${CIRCLE_BRANCH}.js" src/config.js
+      - run: yarn install
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - run: yarn build --silent
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - build
+  deploy-staging:
+    docker:
+      - image: kyleondy/alpine-rsync:stable
+    working_directory: ~/workspace
+    steps:
+      - attach_workspace:
+          at: ./
+      - run: chmod -R 774 build
+      - run: rsync -vrP --delete -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" build/ deploy@nodefactory.io:/var/www/app.eatmybet.nodefactory.io
+  deploy-production:
+    docker:
+      - image: kyleondy/alpine-rsync:stable
+    working_directory: ~/workspace
+    steps:
+      - attach_workspace:
+          at: ./
+      - run: chmod -R 774 build
+      - run: rsync -vrP --delete -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" build/ deploy@nodefactory.io:/var/www/app.eatmybet.com
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only:
+                - master
+                - prod
+      - deploy-staging:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - master
+      - deploy-production:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - prod
+
+

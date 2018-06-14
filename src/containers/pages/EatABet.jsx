@@ -16,7 +16,7 @@ class EatABetPage extends React.Component {
   }
 
   componentDidMount() {
-    const { contract } = this.props;
+    //const { contract } = this.props;
     //contract.getBetPoolSize.then((size) => {
     // })
     // Missing getBEtPoolSize function
