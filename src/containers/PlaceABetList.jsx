@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import _ from 'lodash';
 
 import { fetchGames } from "../redux/actions";
 
@@ -15,10 +16,9 @@ class PlaceABetList extends React.Component {
       betPools: [],
       gameId: null,
       outcome: null,
-      amount: null
+      amount: null,
+      bettingGames: [],
     };
-
-    this.placeBet = this.placeBet.bind(this);
   }
 
   placeBet() {
@@ -38,6 +38,12 @@ class PlaceABetList extends React.Component {
     this.props.fetchGames();
   }
 
+  onGameClick(gameId, bet) {
+    const { bettingGames } = this.state;
+    bettingGames.push({ gameId, bet });
+    this.setState({ bettingGames });
+  }
+
   render() {
     const { games } = this.props; 
 
@@ -47,6 +53,8 @@ class PlaceABetList extends React.Component {
     return (
       <div className="place-a-bet-wrap">
         {games.map(function(game, index){
+          const playedBet = !!_.find(this.state.bettingGames, {gameId: game.gameId});
+
           return (
           <div className="place-a-bet game" key={index}>
             <div className="grid grid-pad-small">
@@ -57,26 +65,29 @@ class PlaceABetList extends React.Component {
                     <span className="time">{ moment.utc(game.dateTime).local().format('HH:mm') }</span>
                   </div>
                   <div className="home col-4-12">
-                    <button className="action home">
-                      <div className="flag" style={{ backgroundImage: 'url(/images/flags/' + game.homeTeamNameShort + '.png'  }}></div>
+                    <button className="action home" onClick={() => this.onGameClick(game.gameId, 1)}>
+                      <div className="flag" style={{ backgroundImage: 'url(/images/flags/' + game.homeTeamNameShort + '.png'  }} />
                       {game.homeTeamNameShort}
                     </button>
                   </div>
+
                   <div className="seperator col-2-12">
-                    <button className="action draw">
+                    <button className="action draw" onClick={() => this.onGameClick(game.gameId, 2)}>
                       X
                     </button>
                   </div>
+
                   <div className="away col-4-12">
-                    <button className="action away">
-                      <div className="flag" style={{ backgroundImage: 'url(/images/flags/' + game.awayTeamNameShort + '.png'  }}></div>
+                    <button className="action away" onClick={() => this.onGameClick(game.gameId, 3)}>
+                      <div className="flag" style={{ backgroundImage: 'url(/images/flags/' + game.awayTeamNameShort + '.png'  }} />
                       {game.awayTeamNameShort}
                     </button>
                   </div>
                 </div>
               </div>
+
               <div className="action col-1-4">
-                <div className="grid grid-pad-small info"> 
+                <div className={`grid grid-pad-small info ${!playedBet ? 'inactive' : '' }`}>
                     <div className="col-6-12">
                       <span>Odd</span>
                       <input type="text" />
@@ -93,7 +104,7 @@ class PlaceABetList extends React.Component {
               </div>
             </div>
           </div>
-        )})}
+        )}.bind(this))}
       </div>
     );
   }

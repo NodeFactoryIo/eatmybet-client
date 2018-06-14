@@ -81,7 +81,9 @@ html, body { font-size: 12px; font-family: sans-serif; width: 100%; color: #0F57
     .place-a-bet-wrap .game .info button.draw { text-align: center; line-height: 35px; }
     .place-a-bet-wrap .game button:hover, .place-a-bet-wrap .game button.active { background-color:  #0D87C0; color: #fff; }
 
-    .place-a-bet-wrap .game .action span { display: block; font-size: 1.2rem; }
+  .place-a-bet-wrap .game .info.inactive { color: #ccc }
+
+.place-a-bet-wrap .game .action span { display: block; font-size: 1.2rem; }
     .place-a-bet-wrap .game .action input { line-height: 22px; font-size: 15px; padding: 4px 6px; border-radius: 4px; border: 1px solid #999da3; }
     .place-a-bet-wrap .game .action .place { color: #0D87C0; text-align: center; line-height: 35px; }
       .place-a-bet-wrap .game .action .place:hover, .place-a-bet-wrap .game .action .place.active { color: #fff; }
