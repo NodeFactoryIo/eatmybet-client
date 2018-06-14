@@ -117,8 +117,16 @@ class EatABetList extends React.Component {
                     </div>
                   </div>
                   <div class="action disabled col-1-4">
-                    { bet.amount }<br/>
-                    { bet.odd }
+                    <div class="grid grid-pad-small info"> 
+                      <div class="col-6-12">
+                        <span class="label">Odd</span>
+                        <span class="value">{bet.odd}</span>
+                      </div>
+                      <div class="col-6-12">
+                        <span class="label">Amount</span>
+                        <span class="value">{bet.amount}</span>
+                      </div>
+                    </div>
                   </div>
                   <div class="action col-1-6">
                     <button class="eat">Eat bet</button>
