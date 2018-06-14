@@ -75,7 +75,7 @@ class PlaceABetList extends React.Component {
                   </div>
                 </div>
               </div>
-              <div class="action col-1-4">
+              <div class="action disabled col-1-4">
                 <div class="grid grid-pad-small info"> 
                     <div class="col-6-12">
                       <span>Odd</span>

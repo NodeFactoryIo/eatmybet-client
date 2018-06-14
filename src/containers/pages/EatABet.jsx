@@ -3,7 +3,8 @@ import { connect } from "react-redux";
 import PropTypes from 'prop-types';
 
 import Header from '../Header';
-import PlaceABetList from '../PlaceABetList';
+import EatABetList from '../EatABetList';
+
 
 class EatABetPage extends React.Component {
   constructor(props){
@@ -31,7 +32,7 @@ class EatABetPage extends React.Component {
     return (
       <div class="eat-a-bet-page">
         <Header />
-        <PlaceABetList />
+        <EatABetList />
       </div>
     );
   }
