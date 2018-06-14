@@ -11,6 +11,15 @@ function contract(state = {}, action) {
   }
 }
 
+function web3(state = {}, action) {
+  switch (action.type) {
+    case actions.INIT_WEB3_SUCCESS:
+      return action.data;
+    default:
+      return state;
+  }
+}
+
 function games(state = [], action) {
   switch (action.type) {
     case actions.FETCH_GAMES_SUCCESS:
@@ -31,6 +40,7 @@ function error(state = {}, action) {
 
 export default combineReducers({
   contract,
+  web3,
   games,
   error,
 });

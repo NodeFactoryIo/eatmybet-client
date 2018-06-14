@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import _ from 'lodash';
 
 import { fetchGames } from "../redux/actions";
 
@@ -17,20 +16,8 @@ class PlaceABetList extends React.Component {
       gameId: null,
       outcome: null,
       amount: null,
-      bettingGames: [],
+      bettingGames: {},
     };
-  }
-
-  placeBet() {
-
-    //console.log(this.state.outcome)
-    //let matchId = contract.getMatchId(gameId);
-
-    const { contract } = this.props;
-    let matchId;
-    let bet; // 0, 1 - x, 2
-    let coef;
-    contract.makeBet(matchId, bet, coef);
   }
 
   componentDidMount() {
@@ -40,12 +27,46 @@ class PlaceABetList extends React.Component {
 
   onGameClick(gameId, bet) {
     const { bettingGames } = this.state;
-    bettingGames.push({ gameId, bet });
-    this.setState({ bettingGames });
+    const newBet = {
+      [gameId]: {
+        bet,
+      },
+    };
+    this.setState({ bettingGames: {...bettingGames, ...newBet} });
+  }
+
+  onCoefChange(gameId, e) {
+    const newCoef = parseInt(e.target.value);
+    const gameBet = this.getGameById(gameId);
+    gameBet.coef = newCoef;
+    this.setState({ bettingGames: {...this.state.bettingGames, [gameId]: gameBet } });
+  }
+
+  onAmountChange(gameId, e) {
+    const newAmount = parseInt(e.target.value);
+    const gameBet = this.getGameById(gameId);
+    // Depending on the amount input convert to wei
+    // TODO: Convert to wei and fix error
+    // gameBet.amount = web3.utils.toWei(newAmount); // convert to bignumber?
+    gameBet.amount = 100000000000000000;
+    this.setState({ bettingGames: {...this.state.bettingGames, [gameId]: gameBet } });
+  }
+
+  getGameById(gameId) {
+    return this.state.bettingGames[gameId];
+  }
+
+  onSubmit(gameId) {
+    const { contract, web3 } = this.props;
+    const gameBet = this.getGameById(gameId);
+
+    contract.methods.makeBet(gameId, gameBet.bet, gameBet.coef)
+      .send({value: gameBet.amount, from: web3.eth.defaultAccount });
   }
 
   render() {
-    const { games } = this.props; 
+    const { games } = this.props;
+    console.log(this.state);
 
     // onChange={(value) => this.setState({ outcome: value })}
     // onChange={(value) => this.setState({ amount: value })}
@@ -53,7 +74,7 @@ class PlaceABetList extends React.Component {
     return (
       <div className="place-a-bet-wrap">
         {games.map(function(game, index){
-          const playedBet = !!_.find(this.state.bettingGames, {gameId: game.gameId});
+          const playedBet = !!this.getGameById(game.gameId);
 
           return (
           <div className="place-a-bet game" key={index}>
@@ -90,17 +111,17 @@ class PlaceABetList extends React.Component {
                 <div className={`grid grid-pad-small info ${!playedBet ? 'inactive' : '' }`}>
                     <div className="col-6-12">
                       <span>Odd</span>
-                      <input type="text" />
+                      <input type="text" disabled={!playedBet} onChange={(e) => this.onCoefChange(game.gameId, e)} />
                     </div>
                     <div className="col-6-12">
                       <span>Amount</span>
-                      <input type="text" />
+                      <input type="text" disabled={!playedBet} onChange={(e) => this.onAmountChange(game.gameId, e)}  />
                     </div>
                   </div>
                 
               </div>
               <div className="action col-1-6">
-                <button className="place">Place bet</button>
+                <button className="place" onClick={() => this.onSubmit(game.gameId)}>Place bet</button>
               </div>
             </div>
           </div>
@@ -123,6 +144,7 @@ function mapDispatchToProps(dispatch) {
 const mapStateToProps = state => ({
   contract: state.contract,
   games: state.games,
+  web3: state.web3,
 });
 
 export default connect(
