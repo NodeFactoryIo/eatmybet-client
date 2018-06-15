@@ -36,6 +36,9 @@ class PlaceABetList extends React.Component {
   }
 
   onCoefChange(gameId, e) {
+    if (e.target.value === '') {
+      return;
+    }
     const newCoef = parseInt(e.target.value);
     const gameBet = this.getGameById(gameId);
     gameBet.coef = newCoef;
@@ -43,6 +46,10 @@ class PlaceABetList extends React.Component {
   }
 
   onAmountChange(gameId, e) {
+    if (e.target.value === '') {
+      return;
+    }
+
     const { web3 } = this.props;
     const newAmount = e.target.value;
     const gameBet = this.getGameById(gameId);
