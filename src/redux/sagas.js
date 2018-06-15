@@ -1,5 +1,7 @@
 import { all, takeLatest, call, put, fork } from 'redux-saga/effects';
 import Web3 from 'web3';
+
+import { networkID } from "../config";
 import actions from './actions';
 import { fetchContracts, fetchGames } from "./api";
 
@@ -13,7 +15,7 @@ function* contract() {
         web3.eth.defaultAccount = accounts[0];
       });
       const contract = data.EatMyBetContract;
-      const eatMyBetContract = new web3.eth.Contract(contract.abi, contract.networks[3].address);
+      const eatMyBetContract = new web3.eth.Contract(contract.abi, contract.networks[networkID].address);
 
       yield put({type: actions.FETCH_CONTRACTS_SUCCESS, data: eatMyBetContract });
       yield put({type: actions.INIT_WEB3_SUCCESS, data: web3 });
