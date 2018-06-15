@@ -1,7 +1,9 @@
 import React from 'react';
 import { connect } from "react-redux";
+import { Redirect } from "react-router-dom";
 import { bindActionCreators } from "redux";
 import moment from 'moment';
+import _ from 'lodash';
 
 import { fetchGames } from '../redux/actions';
 
@@ -11,6 +13,7 @@ class EatABetList extends React.Component {
 
     this.state = {
       betPools: {},
+      betsLoaded: false,
     };
   }
 
@@ -31,16 +34,22 @@ class EatABetList extends React.Component {
         betPools.forEach(bet => {
           this.setState({ betPools: {...this.state.betPools, [bet.gameId]: bet} });
         });
+        this.setState({ betsLoaded: true });
       });
     });
   }
 
   render() {
-    const { betPools } = this.state;
+    const { betPools, betsLoaded } = this.state;
     const { games } = this.props;
 
     if (games.length === 0) {
       return 'Loading';
+    }
+
+    if (_.isEmpty(betPools) && betsLoaded) {
+      alert("No active bets but you can create a new one!");
+      return <Redirect push to="/place-a-bet" />
     }
     
     return (
