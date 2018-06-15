@@ -32,7 +32,9 @@ class EatABetList extends React.Component {
 
       Promise.all(promises).then(betPools => {
         betPools.forEach(bet => {
-          this.setState({ betPools: {...this.state.betPools, [bet.gameId]: bet} });
+          const bets = this.state.betPools;
+          const newArray = bets[bet.gameId] ? _.concat(bets[bet.gameId], bet) : [bet];
+          this.setState({ betPools: {...bets, [bet.gameId]: newArray } });
         });
         this.setState({ betsLoaded: true });
       });
@@ -47,7 +49,17 @@ class EatABetList extends React.Component {
       return 'Loading';
     }
 
-    if (_.isEmpty(betPools) && betsLoaded) {
+    let noBetsForExistingGames = true;
+    if (!_.isEmpty(betPools)) {
+      for (let i = 0; i < games.length; i++) {
+        if (betPools[games[i].gameId]) {
+          noBetsForExistingGames = false;
+          break;
+        }
+      }
+    }
+
+    if ((_.isEmpty(betPools) || noBetsForExistingGames) && betsLoaded) {
       alert("No active bets but you can create a new one!");
       return <Redirect push to="/place-a-bet" />
     }
@@ -90,7 +102,7 @@ class EatABetList extends React.Component {
                 
               </div>
             </div>
-            {betPools.map(function(bet, index){
+            {betPools[game.gameId] && betPools[game.gameId].map(function(bet, index){
               return (
                 <div key={index} className={"bet " + ((index === 0) ? 'first' : '')}>
                   <div className="grid grid-pad-small">
