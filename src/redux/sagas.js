@@ -13,7 +13,7 @@ function* contract() {
         web3.eth.defaultAccount = accounts[0];
       });
       const contract = data.EatMyBetContract;
-      const eatMyBetContract = new web3.eth.Contract(contract.abi, contract.networks[666].address);
+      const eatMyBetContract = new web3.eth.Contract(contract.abi, contract.networks[3].address);
 
       yield put({type: actions.FETCH_CONTRACTS_SUCCESS, data: eatMyBetContract });
       yield put({type: actions.INIT_WEB3_SUCCESS, data: web3 });
