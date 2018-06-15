@@ -36,7 +36,7 @@ class PlaceABetList extends React.Component {
   }
 
   onCoefChange(gameId, e) {
-    const newCoef = parseInt(e.target.value);
+    const newCoef = parseInt(e.target.value, 10);
     const gameBet = this.getGameById(gameId);
     gameBet.coef = newCoef;
     this.setState({ bettingGames: {...this.state.bettingGames, [gameId]: gameBet } });
