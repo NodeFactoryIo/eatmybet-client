@@ -1,148 +1,161 @@
 import React from 'react';
 import { connect } from "react-redux";
+import { Redirect } from "react-router-dom";
 import { bindActionCreators } from "redux";
-import PropTypes from 'prop-types';
 import moment from 'moment';
+import _ from 'lodash';
 
-import { fetchGames } from "../redux/actions";
-
+import { fetchGames } from '../redux/actions';
 
 class EatABetList extends React.Component {
   constructor(props){
     super(props);
 
     this.state = {
-      betPools: [],
-      gameId: null,
-      outcome: null,
-      amount: null
-    }
-
-    this.placeBet = this.placeBet.bind(this);
+      betPools: {},
+      betsLoaded: false,
+    };
   }
 
-  placeBet() {
-    /*
-    let matchId = contract.getMatchId(gameId);
-
-    const { contract } = this.props;
-    let matchId;
-    let bet; // 0, 1 - x, 2
-    let coef;
-    contract.makeBet(matchId, bet, coef);
-    */
-  }
-
-  componentDidMount() {
-    // const { contract } = this.props;
+  componentWillMount() {
     this.props.fetchGames();
   }
 
-  render() {
-    const { games } = this.props; 
-    const bets = [ 
-      { gameId : 21, outcome: 1, odd: 1.2, amount: 100 },
-      { gameId : 21, outcome: 2, odd: 1.3, amount: 1 },
-      { gameId : 21, outcome: 3, odd: 1.4, amount: 10 },
-      { gameId : 21, outcome: 2, odd: 1.1, amount: 20 },
-      { gameId : 21, outcome: 2, odd: 4.2, amount: 52 },
-      { gameId : 21, outcome: 1, odd: 18, amount: 1000 },
-      { gameId : 21, outcome: 1, odd: 1.99, amount: 64 }
-    ];
+  componentDidMount() {
+    const { contract } = this.props;
 
-    // onChange={(value) => this.setState({ outcome: value })}
-    // onChange={(value) => this.setState({ amount: value })}
+    contract.methods.getBetPoolCount().call().then((count) => {
+      const promises = [];
+      for (let i = 0; i < count; i++) {
+        promises.push(contract.methods.betPools(i).call());
+      }
+
+      Promise.all(promises).then(betPools => {
+        betPools.forEach(bet => {
+          const bets = this.state.betPools;
+          const newArray = bets[bet.gameId] ? _.concat(bets[bet.gameId], bet) : [bet];
+          this.setState({ betPools: {...bets, [bet.gameId]: newArray } });
+        });
+        this.setState({ betsLoaded: true });
+      });
+    });
+  }
+
+  render() {
+    const { betPools, betsLoaded } = this.state;
+    const { games } = this.props;
+
+    if (games.length === 0) {
+      return 'Loading';
+    }
+
+    let noBetsForExistingGames = true;
+    if (!_.isEmpty(betPools)) {
+      for (let i = 0; i < games.length; i++) {
+        if (betPools[games[i].gameId]) {
+          noBetsForExistingGames = false;
+          break;
+        }
+      }
+    }
+
+    if ((_.isEmpty(betPools) || noBetsForExistingGames) && betsLoaded) {
+      alert("No active bets but you can create a new one!");
+      return <Redirect push to="/place-a-bet" />
+    }
     
     return (
-      <div class="eat-a-bet-wrap">
+      <div className="eat-a-bet-wrap">
         {games.map(function(game, index){
-          return <div class="game">
-            <div class="grid grid-pad-small">
-              <div class="col-7-12">
-                <div class="grid grid-pad-small info"> 
-                  <div class="datetime col-2-12">
-                    <span class="date">{ moment.utc(game.dateTime).local().format('DD.MM.YYYY') }</span><br/>  
-                    <span class="time">{ moment.utc(game.dateTime).local().format('HH:mm') }</span>
+          return !betPools[game.gameId] ? '' : (
+          <div className="game" key={index}>
+            <div className="grid grid-pad-small">
+              <div className="col-7-12">
+                <div className="grid grid-pad-small info"> 
+                  <div className="datetime col-2-12">
+                    <span className="date">{ moment.utc(game.dateTime).local().format('DD.MM.YYYY') }</span><br/>  
+                    <span className="time">{ moment.utc(game.dateTime).local().format('HH:mm') }</span>
                   </div>
-                  <div class="home col-4-12">
-                    <button class="action home">
-                      <div class="flag" style={{ backgroundImage: 'url(/images/flags/' + game.homeTeamNameShort + '.png'  }}></div>
+                  <div className="home col-4-12">
+                    <button className="action home">
+                      <div className="flag" style={{ backgroundImage: 'url(/images/flags/' + game.homeTeamNameShort + '.png'  }} />
                       {game.homeTeamNameShort}
                     </button>
                   </div>
-                  <div class="seperator col-2-12">
-                    <button class="action draw">
+                  <div className="seperator col-2-12">
+                    <button className="action draw">
                       X
                     </button>
                   </div>
-                  <div class="away col-4-12">
-                    <button class="action away">
-                      <div class="flag" style={{ backgroundImage: 'url(/images/flags/' + game.awayTeamNameShort + '.png'  }}></div>
+                  <div className="away col-4-12">
+                    <button className="action away">
+                      <div className="flag" style={{ backgroundImage: 'url(/images/flags/' + game.awayTeamNameShort + '.png'  }} />
                       {game.awayTeamNameShort}
                     </button>
                   </div>
                 </div>
               </div>
-              <div class="action disabled col-1-4">
+              <div className="action disabled col-1-4">
                 &nbsp;
               </div>
-              <div class="action col-1-6">
+              <div className="action col-1-6">
                 
               </div>
             </div>
-            {bets.map(function(bet, index){
-              return <div className={"bet " + ((index === 0) ? 'first' : '')}>
-              <div class="grid grid-pad-small">
-                  <div class="col-7-12">
-                    <div class="grid grid-pad-small info"> 
-                        <div class="col-2-12">
-                            &nbsp;
-                        </div>
-                        <div class="home push-1-12 col-2-12">
-                        <button className={"home " + (bet.outcome === 1 ? 'active' : 'inactive')}>
-                            1
-                        </button>
-                        </div>
-                        <div class="seperator push-1-12 col-2-12">
-                        <button className={"draw " + (bet.outcome === 2 ? 'active' : 'inactive')}>
-                            X
-                        </button>
-                        </div>
-                        <div class="away push-1-12 col-2-12">
-                        <button className={"away " + (bet.outcome === 3 ? 'active' : 'inactive')}>
-                            2
-                        </button>
-                        </div>
-                    </div>
-                  </div>
-                  <div class="action disabled col-1-4">
-                    <div class="grid grid-pad-small info"> 
-                      <div class="col-6-12">
-                        <span class="label">Odd</span>
-                        <span class="value">{bet.odd}</span>
-                      </div>
-                      <div class="col-6-12">
-                        <span class="label">Amount</span>
-                        <span class="value">{bet.amount}</span>
+            {betPools[game.gameId] && betPools[game.gameId].map(function(bet, index){
+              return (
+                <div key={index} className={"bet " + ((index === 0) ? 'first' : '')}>
+                  <div className="grid grid-pad-small">
+                    <div className="col-7-12">
+                      <div className="grid grid-pad-small info"> 
+                          <div className="col-2-12">
+                              &nbsp;
+                          </div>
+                          <div className="home push-1-12 col-2-12">
+                          <button className={"home " + (bet.result === 1 ? 'active' : 'inactive')}>
+                              1
+                          </button>
+                          </div>
+                          <div className="seperator push-1-12 col-2-12">
+                          <button className={"draw " + (bet.result === 2 ? 'active' : 'inactive')}>
+                              X
+                          </button>
+                          </div>
+                          <div className="away push-1-12 col-2-12">
+                          <button className={"away " + (bet.result === 3 ? 'active' : 'inactive')}>
+                              2
+                          </button>
+                          </div>
                       </div>
                     </div>
-                  </div>
-                  <div class="action col-1-6">
-                    <button class="eat">Eat bet</button>
-                  </div>
+
+                    <div className="action disabled col-1-4">
+                      <div className="grid grid-pad-small info"> 
+                        <div className="col-6-12">
+                          <span className="label">Odd</span>
+                          <span className="value">{bet.coef}</span>
+                        </div>
+                        <div className="col-6-12">
+                          <span className="label">Amount</span>
+                          <span className="value">{bet.poolSize / bet.coef}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="action col-1-6">
+                      <button className="eat">Eat bet</button>
+                    </div>
+                </div>
               </div>
-          </div>
+              )
             })}
           </div>
+          )
         })}
       </div>
     );
   }
 }
-
-EatABetList.contextTypes = {
-  web3: PropTypes.object
-};
 
 function mapDispatchToProps(dispatch) {
   return {
