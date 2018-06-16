@@ -11,13 +11,14 @@ class ContractLoader extends React.Component {
   }
 
   render() {
-    const { contract } = this.props;
-    return _.isEmpty(contract) ? 'Loading...' : this.props.children;
+    const { contract, web3 } = this.props;
+    return _.isEmpty(contract) || _.isEmpty(web3) ? 'Loading...' : this.props.children;
   }
 }
 
 const mapStateToProps = state => ({
   contract: state.contract,
+  web3: state.web3,
 });
 
 function mapDispatchToProps(dispatch) {
