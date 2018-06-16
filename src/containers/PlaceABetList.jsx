@@ -1,10 +1,6 @@
 import React from 'react';
 import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import PropTypes from 'prop-types';
 import moment from 'moment';
-
-import { fetchGames } from "../redux/actions";
 
 
 class PlaceABetList extends React.Component {
@@ -18,10 +14,6 @@ class PlaceABetList extends React.Component {
       amount: null,
       bettingGames: {},
     };
-  }
-
-  componentDidMount() {
-    this.props.fetchGames();
   }
 
   onGameClick(gameId, bet) {
@@ -71,7 +63,8 @@ class PlaceABetList extends React.Component {
 
   render() {
     const { games } = this.props;
-    
+    const { bettingGames } = this.state;
+
     return (
       <div className="place-a-bet-wrap">
         {games.map(function(game, index){
@@ -87,20 +80,32 @@ class PlaceABetList extends React.Component {
                     <span className="time">{ moment.utc(game.dateTime).local().format('HH:mm') }</span>
                   </div>
                   <div className="home col-4-12">
-                    <button className="action home" onClick={() => this.onGameClick(game.gameId, 1)}>
-                      <div className="flag" style={{ backgroundImage: 'url(/images/flags/' + game.homeTeamNameShort + '.png'  }} />
+                    <button
+                      className={"action home " +
+                        (bettingGames[game.gameId] && bettingGames[game.gameId].bet === 1 ? 'active' : 'inactive')}
+                      onClick={() => this.onGameClick(game.gameId, 1)}
+                    >
+                      <div className="flag"style={{ backgroundImage: 'url(/images/flags/' + game.homeTeamNameShort + '.png'  }} />
                       {game.homeTeamNameShort}
                     </button>
                   </div>
 
                   <div className="seperator col-2-12">
-                    <button className="action draw" onClick={() => this.onGameClick(game.gameId, 2)}>
+                    <button
+                      className={"action draw " +
+                      (bettingGames[game.gameId] && bettingGames[game.gameId].bet === 2 ? 'active' : 'inactive')}
+                      onClick={() => this.onGameClick(game.gameId, 2)}
+                    >
                       X
                     </button>
                   </div>
 
                   <div className="away col-4-12">
-                    <button className="action away" onClick={() => this.onGameClick(game.gameId, 3)}>
+                    <button
+                      className={"action away " +
+                      (bettingGames[game.gameId] && bettingGames[game.gameId].bet === 3 ? 'active' : 'inactive')}
+                      onClick={() => this.onGameClick(game.gameId, 3)}
+                    >
                       <div className="flag" style={{ backgroundImage: 'url(/images/flags/' + game.awayTeamNameShort + '.png'  }} />
                       {game.awayTeamNameShort}
                     </button>
@@ -132,16 +137,6 @@ class PlaceABetList extends React.Component {
   }
 }
 
-PlaceABetList.contextTypes = {
-  web3: PropTypes.object
-};
-
-function mapDispatchToProps(dispatch) {
-  return {
-    fetchGames: bindActionCreators(fetchGames, dispatch),
-  }
-}
-
 const mapStateToProps = state => ({
   contract: state.contract,
   games: state.games,
@@ -150,5 +145,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  null,
 )(PlaceABetList);

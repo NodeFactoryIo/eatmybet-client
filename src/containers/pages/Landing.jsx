@@ -22,8 +22,7 @@ class LandingPage extends React.Component {
 
   checkSelectedNetwork(web3) {
     return web3.eth.net.getId((err, netId) => {
-      console.log(netId);
-      if (netId !== networkID) {
+      if (netId !== parseInt(networkID)) {
         this.setState({ isCorrectNetwork: false });
       }
     });
