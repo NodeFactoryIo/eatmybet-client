@@ -1,10 +1,6 @@
 import React from 'react';
 import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import PropTypes from 'prop-types';
 import moment from 'moment';
-
-import { fetchGames } from "../redux/actions";
 
 
 class PlaceABetList extends React.Component {
@@ -18,10 +14,6 @@ class PlaceABetList extends React.Component {
       amount: null,
       bettingGames: {},
     };
-  }
-
-  componentDidMount() {
-    this.props.fetchGames();
   }
 
   onGameClick(gameId, bet) {
@@ -132,16 +124,6 @@ class PlaceABetList extends React.Component {
   }
 }
 
-PlaceABetList.contextTypes = {
-  web3: PropTypes.object
-};
-
-function mapDispatchToProps(dispatch) {
-  return {
-    fetchGames: bindActionCreators(fetchGames, dispatch),
-  }
-}
-
 const mapStateToProps = state => ({
   contract: state.contract,
   games: state.games,
@@ -150,5 +132,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  null,
 )(PlaceABetList);

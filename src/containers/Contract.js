@@ -3,11 +3,12 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import _ from 'lodash';
 
-import { fetchContracts } from "../redux/actions";
+import { fetchContracts, fetchGames } from "../redux/actions";
 
 class ContractLoader extends React.Component {
   componentDidMount() {
     this.props.fetchContracts();
+    this.props.fetchGames();
   }
 
   render() {
@@ -19,11 +20,13 @@ class ContractLoader extends React.Component {
 const mapStateToProps = state => ({
   contract: state.contract,
   web3: state.web3,
+  games: state.games,
 });
 
 function mapDispatchToProps(dispatch) {
   return {
     fetchContracts: bindActionCreators(fetchContracts, dispatch),
+    fetchGames: bindActionCreators(fetchGames, dispatch),
   }
 }
 

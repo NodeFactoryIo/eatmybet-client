@@ -1,11 +1,9 @@
 import React from 'react';
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
-import { bindActionCreators } from "redux";
 import moment from 'moment';
 import _ from 'lodash';
 
-import { fetchGames } from '../redux/actions';
 
 class EatABetList extends React.Component {
   constructor(props){
@@ -18,10 +16,6 @@ class EatABetList extends React.Component {
     };
 
     this.onSubmit = this.onSubmit.bind(this);
-  }
-
-  componentWillMount() {
-    this.props.fetchGames();
   }
 
   getBetPools(contract) {
@@ -213,12 +207,6 @@ class EatABetList extends React.Component {
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    fetchGames: bindActionCreators(fetchGames, dispatch),
-  }
-}
-
 const mapStateToProps = state => ({
   contract: state.contract,
   games: state.games,
@@ -227,5 +215,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  null,
 )(EatABetList);

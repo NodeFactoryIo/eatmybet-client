@@ -1,10 +1,6 @@
 import React from 'react';
 import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import PropTypes from 'prop-types';
 import moment from 'moment';
-
-import { fetchGames } from "../redux/actions";
 
 
 class MyBetsList extends React.Component {
@@ -62,18 +58,18 @@ class MyBetsList extends React.Component {
               </div>
 
               <div className="action col-1-4">
-                <div className={`grid grid-pad-small info ${!playedBet ? 'inactive' : '' }`}>
+                <div className={`grid grid-pad-small info active}`}>
                     <div className="col-6-12">
                       <span>Odd</span>
-                      <input type="text" disabled={!playedBet} onChange={(e) => this.onCoefChange(game.gameId, e)} />
+                      <input type="text" onChange={(e) => this.onCoefChange(game.gameId, e)} />
                     </div>
                     <div className="col-6-12">
                       <span>Amount</span>
-                      <input type="text" disabled={!playedBet} onChange={(e) => this.onAmountChange(game.gameId, e)}  />
+                      <input type="text" onChange={(e) => this.onAmountChange(game.gameId, e)}  />
                     </div>
                   </div>
-                
               </div>
+
               <div className="action col-1-6">
                 <button className="place" onClick={() => this.onSubmit(game.gameId)}>Place bet</button>
               </div>
@@ -85,12 +81,6 @@ class MyBetsList extends React.Component {
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    fetchGames: bindActionCreators(fetchGames, dispatch),
-  }
-}
-
 const mapStateToProps = state => ({
   contract: state.contract,
   games: state.games,
@@ -99,5 +89,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  null,
 )(MyBetsList);
