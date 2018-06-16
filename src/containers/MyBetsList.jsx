@@ -9,6 +9,7 @@ class MyBetsList extends React.Component {
 
     this.state = {
       bets: {},
+      poolsLoaded: false,
       betsLoaded: false,
     };
   }
@@ -16,11 +17,18 @@ class MyBetsList extends React.Component {
   componentDidMount() {
     const { contract, web3 } = this.props;
 
+    contract.getPastEvents('PoolCreated', {
+      filter: { creator: web3.eth.defaultAccount }
+    }).then(bets => {
+      this.setState({ poolsLoaded: true });
+      this.setState({ bets: {...this.state.bets, ...bets} })
+    });
+
     contract.getPastEvents('BetTaken', {
       filter: { eater: web3.eth.defaultAccount }
     }).then(bets => {
       this.setState({ betsLoaded: true });
-      this.setState({ bets })
+      this.setState({ bets: {...this.state.bets, ...bets} })
     });
   }
 
@@ -40,19 +48,21 @@ class MyBetsList extends React.Component {
 
   render() {
     const { games, web3 } = this.props;
-    const { bets, betsLoaded } = this.state;
+    const { bets, betsLoaded, poolsLoaded } = this.state;
+
+    console.log(bets);
 
     if (!bets || games.length === 0) {
       return 'Loading...';
     }
 
-    if (_.isEmpty(bets) && betsLoaded) {
+    if (_.isEmpty(bets) && betsLoaded && poolsLoaded) {
       return 'You have no bets.';
     }
 
     return (
       <div className="place-a-bet-wrap">
-        {Array.from(bets).map(function(betObject, index){
+        {Object.values(bets).map(function(betObject, index){
           const bet = betObject.returnValues;
           const game = _.filter(games, { gameId: bet.gameId})[0];
 
