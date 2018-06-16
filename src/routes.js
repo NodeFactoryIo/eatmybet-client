@@ -9,11 +9,13 @@ import ContractLoader from './containers/Contract';
 
 export default () => (
   <Switch>
-    <ContractLoader>
-      <Route exact path="/" component={LandingPage} />
-      <Route exact path="/eat-a-bet" component={EatABetPage} />
-      <Route exact path="/place-a-bet" component={PlaceABetPage} />
-      <Route exact path="/my-bets" component={MyBetsPage} />
-    </ContractLoader>
+    <LandingPage>
+      <ContractLoader>
+        <Route exact path="/" component={LandingPage} />
+        <Route exact path="/eat-a-bet" component={EatABetPage} />
+        <Route exact path="/place-a-bet" component={PlaceABetPage} />
+        <Route exact path="/my-bets" component={MyBetsPage} />
+      </ContractLoader>
+    </LandingPage>
   </Switch>
 );
