@@ -40,8 +40,15 @@ button, .button { border:none; border-radius: 2px; display: inline-block; text-d
 html, body { font-size: 12px; font-family: sans-serif; width: 100%; color: #0F5778; }
 
 .landing-page { width: 100%; text-align: center; margin: 4rem 0 0; }
-  .landing-page .logo { width: 50%; max-width: 700px; margin: 0 0 4rem; } /*animation: App-logo-spin infinite 20s linear; */
+  .landing-page .logo { width: 40%; max-width: 600px; margin: 0 0 4rem; } /*animation: App-logo-spin infinite 20s linear; */
   .landing-page h1 { margin: 0 0 4rem; }
+
+  .landing-page .info { font-size: 20px; max-width: 450px; width: 50%; margin: 0 auto; }
+    .landing-page .info p { margin-bottom: 34px;line-height: 35px; text-align: left;  }
+      .landing-page .info span { display: block; float: left; width: 30px; height: 30px; background-position: center center; background-size: contain; margin: 0 30px 0 0; }
+      .landing-page .info span.checked { background-image: url('/circle-checked.png'); }
+      .landing-page .info span.unchecked { background-image: url('/circle-unchecked.png'); }
+
   .landing-page h2 { margin: 0 0 2rem; }
   .landing-page .actions { margin-bottom: 8rem; }
     .landing-page .actions .button { font-size: 200%; padding: 15px 36px 12px; border-radius: 6px; }

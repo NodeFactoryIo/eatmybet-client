@@ -42,23 +42,34 @@ class LandingPage extends React.Component {
     const { isCorrectNetwork, hasMetamask } = this.state;
 
     if (!this.props.web3) {
-      return 'Loading...';
+      return (
+        <div class="loading">'Loading...'</div>
+      );
     }
-
+    /*
     if (isCorrectNetwork && hasMetamask) {
       return this.props.children;
     }
+    */
 
     return (
       <div className="landing-page">
           <img className="logo" src="./images/logo/logo-vert.png" alt="EatMyBet" />
           <h1>
-            World Cup 2018. crypto betting <br/>
-            <small>Code is our only law!</small>
+            Welcome!
           </h1>
 
-        { isCorrectNetwork ? '' : 'MetaMask not using correct network, please use MainNet or Ropsten.' }
-        { hasMetamask ? '' : <p>Please install <a href="https://metamask.io/" >MetaMask</a> addon.</p> }
+          <div className="info">
+            { hasMetamask === true ? 
+              <p><span className="checked"></span> MetaMask browser extension installed</p> : 
+              <p><span className="unchecked"></span> Please install <a href="https://metamask.io/" >MetaMask</a> addon.</p>
+            }
+
+            { isCorrectNetwork === true ? 
+              <p><span className="checked"></span> MetaMask using correct network</p> : 
+              <p><span className="unchecked"></span> MetaMask not using correct network, please use MainNet or Ropsten.</p>
+            }
+          </div>
       </div>
     );
   }
