@@ -1,29 +1,31 @@
 import React from 'react';
 import { connect } from "react-redux";
 import _ from 'lodash';
+import { bindActionCreators } from "redux";
 
 import { networkID } from "../../config";
+import { initWeb3 } from "../../redux/actions";
 
 class LandingPage extends React.Component {
   constructor(props){
     super(props);
 
     this.state = {
-      isCorrectNetwork: true,
-      hasMetamask: true,
+      isCorrectNetwork: false,
+      metaMaskEnabled: false,
     }
   }
 
   checkMetaMask() {
-    if (!window.web3) {
-      this.setState({ hasMetamask: false });
+    if (window.web3) {
+      this.setState({ metaMaskEnabled: true });
     }
   }
 
   checkSelectedNetwork(web3) {
-    return web3.eth.net.getId((err, netId) => {
-      if (netId !== parseInt(networkID)) {
-        this.setState({ isCorrectNetwork: false });
+    web3.eth.net.getId((err, netId) => {
+      if (netId === parseInt(networkID)) {
+        this.setState({ isCorrectNetwork: true });
       }
     });
   }
@@ -31,25 +33,23 @@ class LandingPage extends React.Component {
   componentDidUpdate(prevProps) {
     const { web3 } = this.props;
 
-    if (!_.isEmpty(web3) && web3 !== prevProps.web3) {
-      this.checkMetaMask();
+    if (!_.isEmpty(web3) && web3 !== prevProps) {
       this.checkSelectedNetwork(web3);
     }
   }
 
-  render() {
-    const { isCorrectNetwork, hasMetamask } = this.state;
+  componentWillMount() {
+    this.props.initWeb3();
+    this.checkMetaMask();
+  }
 
-    if (!this.props.web3) {
-      return (
-        <div class="loading">'Loading...'</div>
-      );
-    }
-    /*
-    if (isCorrectNetwork && hasMetamask) {
+  render() {
+    const { isCorrectNetwork, metaMaskEnabled } = this.state;
+    const { hasMetaMask } = this.props;
+
+    if (isCorrectNetwork && hasMetaMask && metaMaskEnabled) {
       return this.props.children;
     }
-    */
 
     return (
       <div className="landing-page">
@@ -59,13 +59,13 @@ class LandingPage extends React.Component {
           </h1>
 
           <div className="info">
-            { hasMetamask === true ? 
+            { hasMetaMask === true && metaMaskEnabled === true ?
               <p><span className="checked"></span> MetaMask browser extension installed</p> : 
               <p><span className="unchecked"></span> Please install <a href="https://metamask.io/" >MetaMask</a> addon.</p>
             }
 
-            { isCorrectNetwork === true ? 
-              <p><span className="checked"></span> MetaMask using correct network</p> : 
+            { hasMetaMask === false || isCorrectNetwork === true ?
+              null :
               <p><span className="unchecked"></span> MetaMask not using correct network, please use MainNet or Ropsten.</p>
             }
           </div>
@@ -74,12 +74,18 @@ class LandingPage extends React.Component {
   }
 }
 
+function mapDispatchToProps(dispatch) {
+  return {
+    initWeb3: bindActionCreators(initWeb3, dispatch),
+  }
+}
 
 const mapStateToProps = state => ({
   web3: state.web3,
+  hasMetaMask: !(state.error && state.error == 'WEB3'),
 });
 
 export default connect(
   mapStateToProps,
-  null,
+  mapDispatchToProps,
 )(LandingPage);

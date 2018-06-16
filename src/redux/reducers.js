@@ -33,6 +33,8 @@ function error(state = {}, action) {
   switch (action.type){
     case actions.ERROR:
       return action.message;
+    case actions.INIT_WEB3_ERROR:
+      return 'WEB3';
     default:
       return state;
   }

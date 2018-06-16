@@ -2,6 +2,7 @@ const FETCHING_CONTRACTS = 'FETCHING_CONTRACTS';
 const FETCH_CONTRACTS_SUCCESS = 'FETCH_CONTRACTS_SUCCESS';
 const FETCHING_GAMES = 'FETCHING_GAMES';
 const FETCH_GAMES_SUCCESS = 'FETCH_GAMES_SUCCESS';
+const INIT_WEB3 = 'INIT_WEB3';
 const INIT_WEB3_SUCCESS = 'INIT_WEB3_SUCCESS';
 
 export const fetchContracts = () => ({
@@ -12,12 +13,18 @@ export const fetchGames = () => ({
   type: FETCHING_GAMES,
 });
 
+export const initWeb3 = () => ({
+  type: INIT_WEB3,
+});
+
 export default {
   FETCHING_CONTRACTS,
   FETCH_CONTRACTS_SUCCESS,
   FETCHING_GAMES,
   FETCH_GAMES_SUCCESS,
+  INIT_WEB3,
   INIT_WEB3_SUCCESS,
+  INIT_WEB3_ERROR: 'INIT_WEB3_ERROR',
   ERROR: 'ERROR',
 }
 
