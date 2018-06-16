@@ -14,6 +14,7 @@ class EatABetList extends React.Component {
     this.state = {
       betPools: {},
       betsLoaded: false,
+      createdBet: {},
     };
   }
 
@@ -41,9 +42,28 @@ class EatABetList extends React.Component {
     });
   }
 
+  onBetChoose(bet, type) {
+    const newBet = {
+      gameId: bet.gameId,
+      bet: type,
+      amount: `${bet.poolSize / bet.coef}`
+    };
+    this.setState({ bet: newBet });
+  }
+
+  onAmountChange(gameId, e) {
+    if (e.target.value === '') {
+      return;
+    }
+
+    const { web3 } = this.props;
+    const amount = web3.utils.toWei(e.target.value, 'ether');
+    this.setState({ bet: {...this.state.bet, amount} });
+  }
+
   render() {
-    const { betPools, betsLoaded } = this.state;
-    const { games } = this.props;
+    const { betPools, betsLoaded, createdBet } = this.state;
+    const { games, web3 } = this.props;
 
     if (games.length === 0) {
       return 'Loading';
@@ -63,7 +83,7 @@ class EatABetList extends React.Component {
       alert("No active bets but you can create a new one!");
       return <Redirect push to="/place-a-bet" />
     }
-    
+
     return (
       <div className="eat-a-bet-wrap">
         {games.map(function(game, index){
@@ -77,18 +97,20 @@ class EatABetList extends React.Component {
                     <span className="time">{ moment.utc(game.dateTime).local().format('HH:mm') }</span>
                   </div>
                   <div className="home col-4-12">
-                    <button className="action home">
+                    <button className="action home" disabled>
                       <div className="flag" style={{ backgroundImage: 'url(/images/flags/' + game.homeTeamNameShort + '.png'  }} />
                       {game.homeTeamNameShort}
                     </button>
                   </div>
+
                   <div className="seperator col-2-12">
-                    <button className="action draw">
+                    <button className="action draw" disabled>
                       X
                     </button>
                   </div>
+
                   <div className="away col-4-12">
-                    <button className="action away">
+                    <button className="action away" disabled>
                       <div className="flag" style={{ backgroundImage: 'url(/images/flags/' + game.awayTeamNameShort + '.png'  }} />
                       {game.awayTeamNameShort}
                     </button>
@@ -103,6 +125,9 @@ class EatABetList extends React.Component {
               </div>
             </div>
             {betPools[game.gameId] && betPools[game.gameId].map(function(bet, index){
+              const amount = createdBet.gameId === bet.gameId ?
+                `${createdBet[bet.gameId].amount}` :  `${bet.poolSize / bet.coef}`;
+
               return (
                 <div key={index} className={"bet " + ((index === 0) ? 'first' : '')}>
                   <div className="grid grid-pad-small">
@@ -112,17 +137,26 @@ class EatABetList extends React.Component {
                               &nbsp;
                           </div>
                           <div className="home push-1-12 col-2-12">
-                          <button className={"home " + (bet.result === 1 ? 'active' : 'inactive')}>
+                          <button
+                            onClick={() => this.onBetChoose(bet, 1)}
+                            className={"home " + (bet.result === 1 ? 'active' : 'inactive')}
+                          >
                               1
                           </button>
                           </div>
                           <div className="seperator push-1-12 col-2-12">
-                          <button className={"draw " + (bet.result === 2 ? 'active' : 'inactive')}>
+                          <button
+                            onClick={() => this.onBetChoose(bet, 2)}
+                            className={"draw " + (bet.result === 2 ? 'active' : 'inactive')}
+                          >
                               X
                           </button>
                           </div>
                           <div className="away push-1-12 col-2-12">
-                          <button className={"away " + (bet.result === 3 ? 'active' : 'inactive')}>
+                          <button
+                            onClick={() => this.onBetChoose(bet, 3)}
+                            className={"away " + (bet.result === 3 ? 'active' : 'inactive')}
+                          >
                               2
                           </button>
                           </div>
@@ -137,7 +171,11 @@ class EatABetList extends React.Component {
                         </div>
                         <div className="col-6-12">
                           <span className="label">Amount</span>
-                          <span className="value">{bet.poolSize / bet.coef}</span>
+                          <input
+                            type="text"
+                            onChange={(e) => this.onAmountChange(bet.gameId, e)}
+                            value={web3.utils.fromWei(amount)}
+                          />
                         </div>
                       </div>
                     </div>
@@ -148,10 +186,10 @@ class EatABetList extends React.Component {
                 </div>
               </div>
               )
-            })}
+            }.bind(this))}
           </div>
           )
-        })}
+        }.bind(this))}
       </div>
     );
   }
@@ -166,6 +204,7 @@ function mapDispatchToProps(dispatch) {
 const mapStateToProps = state => ({
   contract: state.contract,
   games: state.games,
+  web3: state.web3,
 });
 
 export default connect(
