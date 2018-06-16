@@ -1,14 +1,15 @@
 import React from 'react';
 import { connect } from "react-redux";
 import moment from 'moment';
-
+import _ from 'lodash';
 
 class MyBetsList extends React.Component {
   constructor(props){
     super(props);
 
     this.state = {
-      bets: {}
+      bets: {},
+      betsLoaded: false,
     };
   }
 
@@ -17,15 +18,44 @@ class MyBetsList extends React.Component {
 
     contract.getPastEvents('BetTaken', {
       filter: { eater: web3.eth.defaultAccount }
-    }).then(bets => this.setState({ bets }));
+    }).then(bets => {
+      this.setState({ betsLoaded: true });
+      this.setState({ bets })
+    });
+  }
+
+  getResults(betPoolId) {
+    const { contract, web3 } = this.props;
+
+    contract.methods.betPools(betPoolId).call()
+      .then(response => {
+        const result = response.result;
+        console.log('Result is: ', result);
+
+        if (result == 0) {
+          alert("No results yet!");
+        }
+      })
   }
 
   render() {
-    const { games } = this.props;
-    
+    const { games, web3 } = this.props;
+    const { bets, betsLoaded } = this.state;
+
+    if (!bets || games.length === 0) {
+      return 'Loading...';
+    }
+
+    if (_.isEmpty(bets) && betsLoaded) {
+      return 'You have no bets.';
+    }
+
     return (
       <div className="place-a-bet-wrap">
-        {games.map(function(game, index){
+        {Array.from(bets).map(function(betObject, index){
+          const bet = betObject.returnValues;
+          const game = _.filter(games, { gameId: bet.gameId})[0];
+
           return (
           <div className="place-a-bet game" key={index}>
             <div className="grid grid-pad-small">
@@ -61,17 +91,17 @@ class MyBetsList extends React.Component {
                 <div className={`grid grid-pad-small info active}`}>
                     <div className="col-6-12">
                       <span>Odd</span>
-                      <input type="text" onChange={(e) => this.onCoefChange(game.gameId, e)} />
+                      <span className="value">{bet.coef / 100}</span>
                     </div>
                     <div className="col-6-12">
                       <span>Amount</span>
-                      <input type="text" onChange={(e) => this.onAmountChange(game.gameId, e)}  />
+                      <span className="value">{parseFloat(web3.utils.fromWei(bet.amount)).toFixed(3)}</span>
                     </div>
                   </div>
               </div>
 
               <div className="action col-1-6">
-                <button className="place" onClick={() => this.onSubmit(game.gameId)}>Place bet</button>
+                <button className="place" onClick={() => this.getResults(bet.betPoolId)}>View results</button>
               </div>
             </div>
           </div>
