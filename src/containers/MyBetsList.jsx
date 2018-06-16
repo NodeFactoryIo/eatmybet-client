@@ -7,66 +7,21 @@ import moment from 'moment';
 import { fetchGames } from "../redux/actions";
 
 
-class PlaceABetList extends React.Component {
+class MyBetsList extends React.Component {
   constructor(props){
     super(props);
 
     this.state = {
-      betPools: [],
-      gameId: null,
-      outcome: null,
-      amount: null,
-      bettingGames: {},
+      bets: {}
     };
   }
 
   componentDidMount() {
-    this.props.fetchGames();
-  }
-
-  onGameClick(gameId, bet) {
-    const { bettingGames } = this.state;
-    const newBet = {
-      [gameId]: {
-        bet,
-      },
-    };
-    this.setState({ bettingGames: {...bettingGames, ...newBet} });
-  }
-
-  onCoefChange(gameId, e) {
-    if (e.target.value === '') {
-      return;
-    }
-    const newCoef = parseInt(e.target.value, 10);
-    const gameBet = this.getGameById(gameId);
-    gameBet.coef = newCoef;
-    this.setState({ bettingGames: {...this.state.bettingGames, [gameId]: gameBet } });
-  }
-
-  onAmountChange(gameId, e) {
-    if (e.target.value === '') {
-      return;
-    }
-
-    const { web3 } = this.props;
-    const newAmount = e.target.value;
-    const gameBet = this.getGameById(gameId);
-    // Depending on the amount input convert to wei
-    gameBet.amount = web3.utils.toWei(newAmount, 'ether');
-    this.setState({ bettingGames: {...this.state.bettingGames, [gameId]: gameBet } });
-  }
-
-  getGameById(gameId) {
-    return this.state.bettingGames[gameId];
-  }
-
-  onSubmit(gameId) {
     const { contract, web3 } = this.props;
-    const gameBet = this.getGameById(gameId);
 
-    contract.methods.makeBet(gameId, gameBet.bet, gameBet.coef)
-      .send({value: gameBet.amount, from: web3.eth.defaultAccount });
+    contract.getPastEvents('BetTaken', {
+      filter: { eater: web3.eth.defaultAccount }
+    }).then(bets => this.setState({ bets }));
   }
 
   render() {
@@ -75,8 +30,6 @@ class PlaceABetList extends React.Component {
     return (
       <div className="place-a-bet-wrap">
         {games.map(function(game, index){
-          const playedBet = !!this.getGameById(game.gameId);
-
           return (
           <div className="place-a-bet game" key={index}>
             <div className="grid grid-pad-small">
@@ -132,10 +85,6 @@ class PlaceABetList extends React.Component {
   }
 }
 
-PlaceABetList.contextTypes = {
-  web3: PropTypes.object
-};
-
 function mapDispatchToProps(dispatch) {
   return {
     fetchGames: bindActionCreators(fetchGames, dispatch),
@@ -151,4 +100,4 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(PlaceABetList);
+)(MyBetsList);
