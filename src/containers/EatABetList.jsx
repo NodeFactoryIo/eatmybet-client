@@ -16,15 +16,15 @@ class EatABetList extends React.Component {
       betsLoaded: false,
       createdBet: {},
     };
+
+    this.onSubmit = this.onSubmit.bind(this);
   }
 
   componentWillMount() {
     this.props.fetchGames();
   }
 
-  componentDidMount() {
-    const { contract } = this.props;
-
+  getBetPools(contract) {
     contract.methods.getBetPoolCount().call().then((count) => {
       const promises = [];
       for (let i = 0; i < count; i++) {
@@ -32,8 +32,9 @@ class EatABetList extends React.Component {
       }
 
       Promise.all(promises).then(betPools => {
-        betPools.forEach(bet => {
+        betPools.forEach((betPool, index) => {
           const bets = this.state.betPools;
+          const bet = {...betPool, id: index};
           const newArray = bets[bet.gameId] ? _.concat(bets[bet.gameId], bet) : [bet];
           this.setState({ betPools: {...bets, [bet.gameId]: newArray } });
         });
@@ -42,13 +43,20 @@ class EatABetList extends React.Component {
     });
   }
 
+  componentDidMount() {
+    const { contract } = this.props;
+
+    this.getBetPools(contract);
+  }
+
   onBetChoose(bet, type) {
     const newBet = {
+      id: bet.id,
       gameId: bet.gameId,
       bet: type,
-      amount: `${bet.poolSize / bet.coef}`
+      amount: `${Math.floor(bet.poolSize / (bet.coef / 100))}`
     };
-    this.setState({ bet: newBet });
+    this.setState({ createdBet: newBet });
   }
 
   onAmountChange(gameId, e) {
@@ -56,9 +64,19 @@ class EatABetList extends React.Component {
       return;
     }
 
+    // TODO: warn if max. amount overflow or not a number
+
     const { web3 } = this.props;
     const amount = web3.utils.toWei(e.target.value, 'ether');
-    this.setState({ bet: {...this.state.bet, amount} });
+    this.setState({ createdBet: {...this.state.bet, amount} });
+  }
+
+  onSubmit() {
+    const { contract, web3 } = this.props;
+    const { createdBet } = this.state;
+
+    contract.methods.takeBets([createdBet.id], [createdBet.amount])
+      .send({ value: createdBet.amount, from: web3.eth.defaultAccount });
   }
 
   render() {
@@ -125,8 +143,8 @@ class EatABetList extends React.Component {
               </div>
             </div>
             {betPools[game.gameId] && betPools[game.gameId].map(function(bet, index){
-              const amount = createdBet.gameId === bet.gameId ?
-                `${createdBet[bet.gameId].amount}` :  `${bet.poolSize / bet.coef}`;
+              const amount = createdBet && createdBet.gameId == bet.gameId ?
+                `${createdBet.amount}` :  `${Math.floor(bet.poolSize / (bet.coef / 100))}`;
 
               return (
                 <div key={index} className={"bet " + ((index === 0) ? 'first' : '')}>
@@ -167,7 +185,7 @@ class EatABetList extends React.Component {
                       <div className="grid grid-pad-small info"> 
                         <div className="col-6-12">
                           <span className="label">Odd</span>
-                          <span className="value">{bet.coef}</span>
+                          <span className="value">{bet.coef / 100}</span>
                         </div>
                         <div className="col-6-12">
                           <span className="label">Amount</span>
@@ -181,7 +199,7 @@ class EatABetList extends React.Component {
                     </div>
 
                     <div className="action col-1-6">
-                      <button className="eat">Eat bet</button>
+                      <button className="eat" onClick={this.onSubmit}>Eat bet</button>
                     </div>
                 </div>
               </div>
