@@ -15,6 +15,11 @@ function* contract() {
         web3.eth.defaultAccount = accounts[0];
       });
       const contract = data.EatMyBetContract;
+
+      if (!contract.networks[networkID]) {
+        yield put({type: actions.WEB3_ERROR, message: "Please choose the right network (MainNet, Ropsten) on MetaMask "});
+      }
+
       const eatMyBetContract = new web3.eth.Contract(contract.abi, contract.networks[networkID].address);
 
       yield put({type: actions.FETCH_CONTRACTS_SUCCESS, data: eatMyBetContract });
