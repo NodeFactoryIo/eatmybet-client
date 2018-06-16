@@ -12,17 +12,13 @@ const store = configureStore();
 class App extends React.Component {
   render() {
 
-    if(window.web3) {
-      return (
-        <Provider store={store}>
-          <Router>
-            <Routes />
-          </Router>
-        </Provider>
-      );
-    } else {
-      return <div style={ { margin: '30px',  'text-align': 'center'}}>you have to have metamask installed <br/> <a href="https://metamask.io/">METAMASK - do it</a></div>
-    }
+    return (
+      <Provider store={store}>
+        <Router>
+          <Routes />
+        </Router>
+      </Provider>
+    );
     
   }
 }
