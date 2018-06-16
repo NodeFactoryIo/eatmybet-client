@@ -50,6 +50,7 @@ class EatABetList extends React.Component {
       bet: type,
       amount: `${Math.floor(bet.poolSize / (bet.coef / 100))}`
     };
+
     this.setState({ createdBet: newBet });
   }
 
@@ -62,7 +63,7 @@ class EatABetList extends React.Component {
 
     const { web3 } = this.props;
     const amount = web3.utils.toWei(e.target.value, 'ether');
-    this.setState({ createdBet: {...this.state.bet, amount} });
+    this.setState({ createdBet: {...this.state.bet, amount } });
   }
 
   onSubmit() {
@@ -137,8 +138,8 @@ class EatABetList extends React.Component {
               </div>
             </div>
             {betPools[game.gameId] && betPools[game.gameId].map(function(bet, index){
-              const amount = createdBet && createdBet.gameId == bet.gameId ?
-                `${createdBet.amount}` :  `${Math.floor(bet.poolSize / (bet.coef / 100))}`;
+              const defaultAmount = Number.parseFloat(
+                web3.utils.fromWei(Math.floor(bet.poolSize / (bet.coef / 100)).toString(), 'ether')).toFixed(3);
 
               return (
                 <div key={index} className={"bet " + ((index === 0) ? 'first' : '')}>
@@ -151,7 +152,7 @@ class EatABetList extends React.Component {
                           <div className="home push-1-12 col-2-12">
                           <button
                             onClick={() => this.onBetChoose(bet, 1)}
-                            className={"home " + (bet.result === 1 ? 'active' : 'inactive')}
+                            className={"home " + (createdBet.gameId == bet.gameId && createdBet.bet === 1 ? 'active' : 'inactive')}
                           >
                               1
                           </button>
@@ -159,7 +160,7 @@ class EatABetList extends React.Component {
                           <div className="seperator push-1-12 col-2-12">
                           <button
                             onClick={() => this.onBetChoose(bet, 2)}
-                            className={"draw " + (bet.result === 2 ? 'active' : 'inactive')}
+                            className={"draw " + (createdBet.gameId == bet.gameId && createdBet.bet === 2 ? 'active' : 'inactive')}
                           >
                               X
                           </button>
@@ -167,7 +168,7 @@ class EatABetList extends React.Component {
                           <div className="away push-1-12 col-2-12">
                           <button
                             onClick={() => this.onBetChoose(bet, 3)}
-                            className={"away " + (bet.result === 3 ? 'active' : 'inactive')}
+                            className={"away " + (createdBet.gameId == bet.gameId && createdBet.bet === 3 ? 'active' : 'inactive')}
                           >
                               2
                           </button>
@@ -185,8 +186,8 @@ class EatABetList extends React.Component {
                           <span className="label">Amount</span>
                           <input
                             type="text"
+                            defaultValue={defaultAmount}
                             onChange={(e) => this.onAmountChange(bet.gameId, e)}
-                            value={web3.utils.fromWei(amount)}
                           />
                         </div>
                       </div>
