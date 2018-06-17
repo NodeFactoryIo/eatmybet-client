@@ -24,7 +24,7 @@ class LandingPage extends React.Component {
 
   checkSelectedNetwork(web3) {
     web3.eth.net.getId((err, netId) => {
-      if (netId === parseInt(networkID)) {
+      if (netId === parseInt(networkID, 10)) {
         this.setState({ isCorrectNetwork: true });
       }
     });
@@ -82,7 +82,7 @@ function mapDispatchToProps(dispatch) {
 
 const mapStateToProps = state => ({
   web3: state.web3,
-  hasMetaMask: !(state.error && state.error == 'WEB3'),
+  hasMetaMask: !(state.error && state.error === 'WEB3'),
 });
 
 export default connect(

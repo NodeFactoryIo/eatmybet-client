@@ -152,7 +152,7 @@ class EatABetList extends React.Component {
                           <div className="home push-1-12 col-2-12">
                           <button
                             onClick={() => this.onBetChoose(bet, 1)}
-                            className={"home " + (createdBet.gameId == bet.gameId && createdBet.bet === 1 ? 'active' : 'inactive')}
+                            className={"home " + (createdBet.gameId === bet.gameId && createdBet.bet === 1 ? 'active' : 'inactive')}
                           >
                               1
                           </button>
@@ -160,7 +160,7 @@ class EatABetList extends React.Component {
                           <div className="seperator push-1-12 col-2-12">
                           <button
                             onClick={() => this.onBetChoose(bet, 2)}
-                            className={"draw " + (createdBet.gameId == bet.gameId && createdBet.bet === 2 ? 'active' : 'inactive')}
+                            className={"draw " + (createdBet.gameId === bet.gameId && createdBet.bet === 2 ? 'active' : 'inactive')}
                           >
                               X
                           </button>
@@ -168,7 +168,7 @@ class EatABetList extends React.Component {
                           <div className="away push-1-12 col-2-12">
                           <button
                             onClick={() => this.onBetChoose(bet, 3)}
-                            className={"away " + (createdBet.gameId == bet.gameId && createdBet.bet === 3 ? 'active' : 'inactive')}
+                            className={"away " + (createdBet.gameId === bet.gameId && createdBet.bet === 3 ? 'active' : 'inactive')}
                           >
                               2
                           </button>

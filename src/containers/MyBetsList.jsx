@@ -33,14 +33,14 @@ class MyBetsList extends React.Component {
   }
 
   getResults(betPoolId) {
-    const { contract, web3 } = this.props;
+    const { contract } = this.props;
 
     contract.methods.betPools(betPoolId).call()
       .then(response => {
         const result = response.result;
         console.log('Result is: ', result);
 
-        if (result == 0) {
+        if (result === 0) {
           alert("No results yet!");
         }
       })
