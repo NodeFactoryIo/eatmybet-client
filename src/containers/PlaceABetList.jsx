@@ -69,6 +69,7 @@ class PlaceABetList extends React.Component {
       <div className="place-a-bet-wrap">
         {games.map(function(game, index){
           const playedBet = !!this.getGameById(game.gameId);
+          const validateBet = !!this.getGameById(game.gameId) && this.getGameById(game.gameId).coef > 0 && this.getGameById(game.gameId).amount > 0;
 
           return (
           <div className="place-a-bet game" key={index}>
@@ -127,7 +128,7 @@ class PlaceABetList extends React.Component {
                 
               </div>
               <div className="action col-1-6">
-                <button className="place" onClick={() => this.onSubmit(game.gameId)}>Place bet</button>
+                <button className={"place " + (validateBet ? "active" : "inactive") } onClick={() => this.onSubmit(game.gameId)} disabled={!validateBet}>Place bet</button>
               </div>
             </div>
           </div>

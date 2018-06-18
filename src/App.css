@@ -97,7 +97,9 @@ html, body { font-size: 12px; font-family: sans-serif; width: 100%; color: #0F57
 
     .place-a-bet-wrap .game .action input { line-height: 22px; font-size: 15px; padding: 4px 6px; border-radius: 4px; border: 1px solid #999da3; }
     .place-a-bet-wrap .game .action .place { color: #0D87C0; text-align: center; line-height: 35px; }
-      .place-a-bet-wrap .game .action .place:hover, .place-a-bet-wrap .game .action .place.active { color: #fff; }
+      .place-a-bet-wrap .game .action .place.inactive { background-color: #b8bbc1; cursor: default; }
+      .place-a-bet-wrap .game .action .place.active { color: #0D87C0; background-color: #fff; text-align: center; line-height: 35px; }
+      .place-a-bet-wrap .game .action .place.active:hover { color: #fff; background-color: #0D87C0; }
 
 .eat-a-bet-wrap { max-width: 900px; margin: 0 auto; }
 

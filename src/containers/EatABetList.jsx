@@ -94,7 +94,7 @@ class EatABetList extends React.Component {
 
     if ((_.isEmpty(betPools) || noBetsForExistingGames) && betsLoaded) {
       alert("No active bets but you can create a new one!");
-      return <Redirect push to="/place-a-bet" />
+      return <Redirect push to="/" />
     }
 
     return (

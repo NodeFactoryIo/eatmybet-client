@@ -11,9 +11,8 @@ export default () => (
   <Switch>
     <LandingPage>
       <ContractLoader>
-        <Route exact path="/" component={LandingPage} />
+        <Route exact path="/" component={PlaceABetPage} />
         <Route exact path="/eat-a-bet" component={EatABetPage} />
-        <Route exact path="/place-a-bet" component={PlaceABetPage} />
         <Route exact path="/my-bets" component={MyBetsPage} />
       </ContractLoader>
     </LandingPage>
