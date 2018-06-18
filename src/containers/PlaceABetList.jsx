@@ -57,17 +57,22 @@ class PlaceABetList extends React.Component {
     const { contract, web3 } = this.props;
     const gameBet = this.getGameById(gameId);
 
-    contract.methods.makeBet(gameId, gameBet.bet, gameBet.coef)
+    contract.methods.makeBet(gameId, gameBet.bet, gameBet.coef * 100)
       .send({value: gameBet.amount, from: web3.eth.defaultAccount });
   }
 
   render() {
     const { games } = this.props;
     const { bettingGames } = this.state;
+    const minGameDateTime = moment.utc().add({ hours: 2});
 
     return (
       <div className="place-a-bet-wrap">
         {games.map(function(game, index){
+
+          if(moment.utc(game.dateTime) <= minGameDateTime)
+            return '';
+
           const playedBet = !!this.getGameById(game.gameId);
           const validateBet = !!this.getGameById(game.gameId) && this.getGameById(game.gameId).coef > 0 && this.getGameById(game.gameId).amount > 0;
 

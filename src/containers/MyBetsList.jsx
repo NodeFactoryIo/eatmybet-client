@@ -53,11 +53,15 @@ class MyBetsList extends React.Component {
     console.log(bets);
 
     if (!bets || games.length === 0) {
-      return 'Loading...';
+      return (
+        <div className="place-a-bet-wrap">'Loading...'</div>
+      )
     }
 
     if (_.isEmpty(bets) && betsLoaded && poolsLoaded) {
-      return 'You have no bets.';
+      return (
+        <div className="place-a-bet-wrap"><h2>You have no bets, but you <a href="/">create a new one</a> or <a href="/eat-a-bet">eat an exiting one</a></h2></div>
+      )
     }
 
     return (

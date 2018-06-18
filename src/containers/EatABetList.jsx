@@ -1,12 +1,12 @@
+import _ from 'lodash';
+import moment from 'moment';
 import React from 'react';
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
-import moment from 'moment';
-import _ from 'lodash';
 
 
 class EatABetList extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -26,11 +26,16 @@ class EatABetList extends React.Component {
       }
 
       Promise.all(promises).then(betPools => {
-        betPools.forEach((betPool, index) => {
+        betPools.forEach(async (betPool, index) => {
+          const remainingAmount = await contract.methods.getRemainingBetPoolAmount(betPool);
+          console.log(remainingAmount);
+          if (betPool.owner === this.props.web3.eth.defaultAccount || remainingAmount <= 0) {
+            return true;
+          }
           const bets = this.state.betPools;
-          const bet = {...betPool, id: index};
+          const bet = { ...betPool, id: index };
           const newArray = bets[bet.gameId] ? _.concat(bets[bet.gameId], bet) : [bet];
-          this.setState({ betPools: {...bets, [bet.gameId]: newArray } });
+          this.setState({ betPools: { ...bets, [bet.gameId]: newArray } });
         });
         this.setState({ betsLoaded: true });
       });
@@ -63,55 +68,63 @@ class EatABetList extends React.Component {
 
     const { web3 } = this.props;
     const amount = web3.utils.toWei(e.target.value, 'ether');
-    this.setState({ createdBet: {...this.state.bet, amount } });
+    this.setState({ createdBet: { ...this.state.bet, amount } });
   }
 
-  onSubmit() {
+  onSubmit(bet) {
     const { contract, web3 } = this.props;
     const { createdBet } = this.state;
 
-    contract.methods.takeBets([createdBet.id], [createdBet.amount])
+    const amount = createdBet.amount || Math.floor(bet.poolSize / (bet.coef / 100));
+
+    console.log(amount);
+    console.log(bet);
+
+    contract.methods.takeBets([bet.id], [amount])
       .send({ value: createdBet.amount, from: web3.eth.defaultAccount });
   }
 
-  render() {
-    const { betPools, betsLoaded, createdBet } = this.state;
-    const { games, web3 } = this.props;
+render() {
+  const { betPools, betsLoaded, createdBet } = this.state;
+  const { games, web3 } = this.props;
 
-    if (games.length === 0) {
-      return 'Loading';
-    }
+  if (games.length === 0) {
+    return 'Loading';
+  }
 
-    let noBetsForExistingGames = true;
-    if (!_.isEmpty(betPools)) {
-      for (let i = 0; i < games.length; i++) {
-        if (betPools[games[i].gameId]) {
-          noBetsForExistingGames = false;
-          break;
-        }
+  let noBetsForExistingGames = true;
+  if (!_.isEmpty(betPools)) {
+    for (let i = 0; i < games.length; i++) {
+      if (betPools[games[i].gameId]) {
+        noBetsForExistingGames = false;
+        break;
       }
     }
+  }
 
-    if ((_.isEmpty(betPools) || noBetsForExistingGames) && betsLoaded) {
-      alert("No active bets but you can create a new one!");
-      return <Redirect push to="/" />
-    }
-
+  if ((_.isEmpty(betPools) || noBetsForExistingGames) && betsLoaded) {
     return (
       <div className="eat-a-bet-wrap">
-        {games.map(function(game, index){
-          return !betPools[game.gameId] ? '' : (
+        <h2>No active bets, but you <a href="/">create a new one</a></h2>
+      </div>
+    )
+  }
+
+  return (
+    <div className="eat-a-bet-wrap">
+      {games.map(function (game, index) {
+        return !betPools[game.gameId] ? '' : (
           <div className="game" key={index}>
             <div className="grid grid-pad-small">
               <div className="col-7-12">
-                <div className="grid grid-pad-small info"> 
+                <div className="grid grid-pad-small info">
                   <div className="datetime col-2-12">
-                    <span className="date">{ moment.utc(game.dateTime).local().format('DD.MM.YYYY') }</span><br/>  
-                    <span className="time">{ moment.utc(game.dateTime).local().format('HH:mm') }</span>
+                    <span className="date">{moment.utc(game.dateTime).local().format('DD.MM.YYYY')}</span><br />
+                    <span className="time">{moment.utc(game.dateTime).local().format('HH:mm')}</span>
                   </div>
                   <div className="home col-4-12">
                     <button className="action home" disabled>
-                      <div className="flag" style={{ backgroundImage: 'url(/images/flags/' + game.homeTeamNameShort + '.png'  }} />
+                      <div className="flag" style={{ backgroundImage: 'url(/images/flags/' + game.homeTeamNameShort + '.png' }} />
                       {game.homeTeamNameShort}
                     </button>
                   </div>
@@ -124,7 +137,7 @@ class EatABetList extends React.Component {
 
                   <div className="away col-4-12">
                     <button className="action away" disabled>
-                      <div className="flag" style={{ backgroundImage: 'url(/images/flags/' + game.awayTeamNameShort + '.png'  }} />
+                      <div className="flag" style={{ backgroundImage: 'url(/images/flags/' + game.awayTeamNameShort + '.png' }} />
                       {game.awayTeamNameShort}
                     </button>
                   </div>
@@ -134,10 +147,10 @@ class EatABetList extends React.Component {
                 &nbsp;
               </div>
               <div className="action col-1-6">
-                
+
               </div>
             </div>
-            {betPools[game.gameId] && betPools[game.gameId].map(function(bet, index){
+            {betPools[game.gameId] && betPools[game.gameId].map(function (bet, index) {
               const defaultAmount = Number.parseFloat(
                 web3.utils.fromWei(Math.floor(bet.poolSize / (bet.coef / 100)).toString(), 'ether')).toFixed(3);
 
@@ -145,39 +158,39 @@ class EatABetList extends React.Component {
                 <div key={index} className={"bet " + ((index === 0) ? 'first' : '')}>
                   <div className="grid grid-pad-small">
                     <div className="col-7-12">
-                      <div className="grid grid-pad-small info"> 
-                          <div className="col-2-12">
-                              &nbsp;
+                      <div className="grid grid-pad-small info">
+                        <div className="col-2-12">
+                          &nbsp;
                           </div>
-                          <div className="home push-1-12 col-2-12">
+                        <div className="home push-1-12 col-2-12">
                           <button
-                            onClick={() => this.onBetChoose(bet, 1)}
-                            className={"home " + (createdBet.gameId === bet.gameId && createdBet.bet === 1 ? 'active' : 'inactive')}
+                            disabled
+                            className={"home " + (bet.bet === "1" ? 'active' : 'inactive')}
                           >
-                              1
+                            1
                           </button>
-                          </div>
-                          <div className="seperator push-1-12 col-2-12">
+                        </div>
+                        <div className="seperator push-1-12 col-2-12">
                           <button
-                            onClick={() => this.onBetChoose(bet, 2)}
-                            className={"draw " + (createdBet.gameId === bet.gameId && createdBet.bet === 2 ? 'active' : 'inactive')}
+                            disabled
+                            className={"draw " + (bet.bet === "2" ? 'active' : 'inactive')}
                           >
-                              X
+                            X
                           </button>
-                          </div>
-                          <div className="away push-1-12 col-2-12">
+                        </div>
+                        <div className="away push-1-12 col-2-12">
                           <button
-                            onClick={() => this.onBetChoose(bet, 3)}
-                            className={"away " + (createdBet.gameId === bet.gameId && createdBet.bet === 3 ? 'active' : 'inactive')}
+                            disabled
+                            className={"away " + (bet.bet === "3" ? 'active' : 'inactive')}
                           >
-                              2
+                            2
                           </button>
-                          </div>
+                        </div>
                       </div>
                     </div>
 
                     <div className="action disabled col-1-4">
-                      <div className="grid grid-pad-small info"> 
+                      <div className="grid grid-pad-small info">
                         <div className="col-6-12">
                           <span className="label">Odd</span>
                           <span className="value">{bet.coef / 100}</span>
@@ -194,18 +207,18 @@ class EatABetList extends React.Component {
                     </div>
 
                     <div className="action col-1-6">
-                      <button className="eat" onClick={this.onSubmit}>Eat bet</button>
+                      <button className="eat" onClick={() => this.onSubmit(bet)}>Eat bet</button>
                     </div>
+                  </div>
                 </div>
-              </div>
               )
             }.bind(this))}
           </div>
-          )
-        }.bind(this))}
-      </div>
-    );
-  }
+        )
+      }.bind(this))}
+    </div>
+  );
+}
 }
 
 const mapStateToProps = state => ({
