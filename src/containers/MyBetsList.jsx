@@ -18,7 +18,8 @@ class MyBetsList extends React.Component {
     const { contract, web3 } = this.props;
 
     contract.getPastEvents('PoolCreated', {
-      filter: { creator: web3.eth.defaultAccount }
+      filter: { creator: web3.eth.defaultAccount },
+      fromBlock: 0
     }).then(bets => {
       this.setState({ poolsLoaded: true });
       this.setState({ bets: {...this.state.bets, ...bets} })
@@ -57,13 +58,13 @@ class MyBetsList extends React.Component {
 
     if (!bets || games.length === 0) {
       return (
-        <div className="my-bets-wrap">'Loading...'</div>
+        <div className="my-bets-wrap"><h4 className="loading">Loading...</h4></div>
       )
     }
 
     if (_.isEmpty(bets) && betsLoaded && poolsLoaded) {
       return (
-        <div className="my-bets-wrap"><h2>You have no bets, but you <a href="/">create a new one</a> or <a href="/eat-a-bet">eat an exiting one</a></h2></div>
+        <div className="my-bets-wrap"><h2>You have no bets, but you <a href="/">create a new one</a> or <a href="/eat-a-bet">eat an existing one</a></h2></div>
       )
     }
 
@@ -72,6 +73,8 @@ class MyBetsList extends React.Component {
         {Object.values(bets).map(function(betObject, index){
           const bet = betObject.returnValues;
           const game = _.filter(games, { gameId: bet.gameId})[0];
+
+          console.log(bet);
 
           let actionInfo = 'cancel';
           
@@ -97,7 +100,7 @@ class MyBetsList extends React.Component {
           } 
 
           return (
-          <div className="place-a-bet game" key={index}>
+          <div className="game" key={index}>
             <div className="grid grid-pad-small">
               <div className="col-7-12">
                 <div className="grid grid-pad-small info"> 

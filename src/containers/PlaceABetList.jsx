@@ -30,7 +30,7 @@ class PlaceABetList extends React.Component {
     if (e.target.value === '') {
       return;
     }
-    const newCoef = parseInt(e.target.value, 10);
+    const newCoef = parseFloat(e.target.value).toFixed(2);
     const gameBet = this.getGameById(gameId);
     gameBet.coef = newCoef;
     this.setState({ bettingGames: {...this.state.bettingGames, [gameId]: gameBet } });
@@ -57,7 +57,7 @@ class PlaceABetList extends React.Component {
     const { contract, web3 } = this.props;
     const gameBet = this.getGameById(gameId);
 
-    contract.methods.makeBet(gameId, gameBet.bet, gameBet.coef * 100)
+    contract.methods.makeBet(gameId, gameBet.bet, parseInt(gameBet.coef * 100, 10))
       .send({value: gameBet.amount, from: web3.eth.defaultAccount });
   }
 
@@ -65,6 +65,12 @@ class PlaceABetList extends React.Component {
     const { games } = this.props;
     const { bettingGames } = this.state;
     const minGameDateTime = moment.utc().add({ hours: 2});
+
+    if (games.length === 0) {
+      return (
+        <div className="place-a-bet-wrap"><h4 className="loading">Loading...</h4></div>
+      )
+    }
 
     return (
       <div className="place-a-bet-wrap">
