@@ -139,7 +139,37 @@ html, body { font-size: 12px; font-family: sans-serif; width: 100%; color: #0F57
     .eat-a-bet-wrap .game .bet span.label {}
     .eat-a-bet-wrap .game .bet span.value { line-height: 2.5rem; font-size: 1.7rem;  }
 
+
+.my-bets-wrap { max-width: 900px; margin: 0 auto; }
   
+    .my-bets-wrap .game .grid-pad-small { margin: 0 -10px; }
+      .my-bets-wrap .game [class*=col-] { margin-bottom: 0; }
+  
+    .my-bets-wrap .game { line-height: 2rem; font-size:1.5rem; margin: 0 0 2rem; box-shadow: 0px 2px 18px rgba(0,0,0,0.08); border-radius: 6px; white-space: nowrap; padding: 1rem; position: relative; }
+      .my-bets-wrap input, .my-bets-wrap button { max-width: 100%; }
+      
+      .my-bets-wrap .datetime { font-size: 1.2rem; color: #6d7075; line-height: 26px; font-weight: 300; text-align: center; padding-top: 2px; }
+        .my-bets-wrap .datetime .date { font-weight: 600; }
+        .my-bets-wrap .datetime .time { font-size: 1.7rem; }
+  
+      .my-bets-wrap .game .flag { border-radius: 50%; border: 2px solid #fff; width: 35px; height: 35px; background-position: center center; background-size: cover; background-repeat: no-repeat; box-shadow: 0 0 6px 0 rgba(0,0,0,0.2); display: inline-block; float: 
+      left; margin-right: 12px; }
+        .my-bets-wrap .game .flag img { max-width: 100%; max-height: 100%; }
+  
+    .my-bets-wrap .game .info .home, .my-bets-wrap .game .info .seperator, .my-bets-wrap .game .info .away { line-height: 35px;  }
+      .my-bets-wrap .game button { border: 1px solid #0D87C0; padding: 10px; display: block; font-size: 1.5rem; overflow: hidden; background: none; border-radius: 6px; text-align: left; width: 100%; }
+      .my-bets-wrap .game .info button.draw { text-align: center; line-height: 35px; }
+      .my-bets-wrap .game button:hover, .my-bets-wrap .game button.active { background-color:  #0D87C0; color: #fff; }
+  
+      .my-bets-wrap .game .actions { text-align: center; }
+      .my-bets-wrap .game .info.inactive { color: #ccc }
+      .my-bets-wrap .game .action span { display: block; font-size: 1.2rem; }
+  
+      .my-bets-wrap .game .action input { line-height: 22px; font-size: 15px; padding: 4px 6px; border-radius: 4px; border: 1px solid #999da3; }
+      .my-bets-wrap .game .action .place { color: #0D87C0; text-align: center; line-height: 35px; }
+        .my-bets-wrap .game .action .place.inactive { background-color: #b8bbc1; cursor: default; }
+        .my-bets-wrap .game .action .place.active { color: #fff; text-align: center; line-height: 35px; }
+        .my-bets-wrap .game .action .place.active:hover { color: #fff; background-color: #0970a0; }
 
 
     
