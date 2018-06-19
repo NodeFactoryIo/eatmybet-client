@@ -33,7 +33,7 @@ class LandingPage extends React.Component {
   componentDidUpdate(prevProps) {
     const { web3 } = this.props;
 
-    if (!_.isEmpty(web3) && web3 !== prevProps) {
+    if (!_.isEmpty(web3) && prevProps.web3 && web3 !== prevProps.web3) {
       this.checkSelectedNetwork(web3);
     }
   }
