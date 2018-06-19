@@ -3,6 +3,7 @@ import moment from 'moment';
 import React from 'react';
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
+import Loading from "../components/Loading";
 
 
 class EatABetList extends React.Component {
@@ -89,7 +90,7 @@ render() {
   const { games, web3 } = this.props;
 
   if (games.length === 0) {
-    return 'Loading';
+    return <Loading/>;
   }
 
   let noBetsForExistingGames = true;
