@@ -29,7 +29,6 @@ class EatABetList extends React.Component {
       Promise.all(promises).then(betPools => {
         betPools.forEach(async (betPool, index) => {
           const remainingAmount = await contract.methods.getRemainingBetPoolAmount(betPool);
-          console.log(remainingAmount);
           if (betPool.owner === this.props.web3.eth.defaultAccount || remainingAmount <= 0) {
             return true;
           }

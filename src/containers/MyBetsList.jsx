@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from "react-redux";
 import moment from 'moment';
 import _ from 'lodash';
+import Loading from "../components/Loading";
 
 class MyBetsList extends React.Component {
   constructor(props){
@@ -18,17 +19,32 @@ class MyBetsList extends React.Component {
     const { contract, web3 } = this.props;
 
     contract.getPastEvents('PoolCreated', {
-      filter: { creator: web3.eth.defaultAccount }
+      filter: { creator: web3.eth.defaultAccount },
+      fromBlock: 0
     }).then(bets => {
-      this.setState({ poolsLoaded: true });
-      this.setState({ bets: {...this.state.bets, ...bets} })
+      const betsWithProperties = bets.map(async function(bet) {
+        const eaters = await contract.methods.getBetPoolEaters(bet.returnValues.betPoolId).call();
+        return {...bet, taken: false, against: false, hasEaters: !!(eaters.length > 0)};
+      });
+
+      Promise.all(betsWithProperties).then(result => {
+        this.setState({ bets: {...this.state.bets, ...result}});
+        this.setState({ poolsLoaded: true });
+      });
     });
 
     contract.getPastEvents('BetTaken', {
       filter: { eater: web3.eth.defaultAccount }
     }).then(bets => {
-      this.setState({ betsLoaded: true });
-      this.setState({ bets: {...this.state.bets, ...bets} })
+      const betsWithProperties = bets.map(async function(bet) {
+        const betPool = await contract.methods.betPools(bet.returnValues.betPoolId).call();
+        return {...betPool, taken: true, against: true };
+      });
+
+      Promise.all(betsWithProperties).then(result => {
+        this.setState({ bets: {...this.state.bets, ...result}});
+        this.setState({ poolsLoaded: true });
+      });
     });
   }
 
@@ -57,25 +73,26 @@ class MyBetsList extends React.Component {
 
     if (!bets || games.length === 0) {
       return (
-        <div className="my-bets-wrap">'Loading...'</div>
+        <Loading />
       )
     }
 
     if (_.isEmpty(bets) && betsLoaded && poolsLoaded) {
       return (
-        <div className="my-bets-wrap"><h2>You have no bets, but you <a href="/">create a new one</a> or <a href="/eat-a-bet">eat an exiting one</a></h2></div>
+        <div className="my-bets-wrap"><h2>You have no bets, but you <a href="/">create a new one</a> or <a href="/eat-a-bet">eat an existing one</a></h2></div>
       )
     }
 
     return (
       <div className="my-bets-wrap">
-        {Object.values(bets).map(function(betObject, index){
-          const bet = betObject.returnValues;
+        {Object.values(bets).map(function(bet, index){
           const game = _.filter(games, { gameId: bet.gameId})[0];
+
+          console.log(bet);
 
           let actionInfo = 'cancel';
           
-          let isBetTaken = true;
+          let isBetTaken = bet.taken;
           let waitingForGameOutcome = true; // moment.utc(game.dateTime) < dateTimeNowWithGameEndOffset
           let betHasResult = false;
           let isUserWinner = false;
@@ -88,16 +105,16 @@ class MyBetsList extends React.Component {
             actionInfo = 'waiting';
           }
 
-          if (betHasResult && !isUserWinner) {
+          if (isBetTaken && betHasResult && !isUserWinner) {
             actionInfo = 'none';
           }
 
-          if (betHasResult && isUserWinner) {
+          if (isBetTaken && betHasResult && isUserWinner) {
             actionInfo = 'collect';
           } 
 
           return (
-          <div className="place-a-bet game" key={index}>
+          <div className="game" key={index}>
             <div className="grid grid-pad-small">
               <div className="col-7-12">
                 <div className="grid grid-pad-small info"> 
@@ -106,20 +123,20 @@ class MyBetsList extends React.Component {
                     <span className="time">{ moment.utc(game.dateTime).local().format('HH:mm') }</span>
                   </div>
                   <div className="home col-4-12">
-                    <button disabled className={"home " + (bet.bet === "1" ? 'active' : 'inactive')}>
+                    <button disabled className={"home " + (bet.bet === "1" ? 'placed' : 'inactive')}>
                       <div className="flag" style={{ backgroundImage: 'url(/images/flags/' + game.homeTeamNameShort + '.png'  }} />
                       {game.homeTeamNameShort}
                     </button>
                   </div>
 
                   <div className="seperator col-2-12">
-                  <button disabled className={"draw " + (bet.bet === "2" ? 'active' : 'inactive')}>
+                  <button disabled className={"draw " + (bet.bet === "2" ? 'placed' : 'inactive')}>
                       X
                     </button>
                   </div>
 
                   <div className="away col-4-12">
-                  <button disabled className={"away " + (bet.bet === "3" ? 'active' : 'inactive')}>
+                  <button disabled className={"away " + (bet.bet === "3" ? 'placed' : 'inactive') + (bet.bet === "3" ? 'placed' : 'inactive')}>
                       <div className="flag" style={{ backgroundImage: 'url(/images/flags/' + game.awayTeamNameShort + '.png'  }} />
                       {game.awayTeamNameShort}
                     </button>
