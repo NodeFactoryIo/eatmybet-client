@@ -2,7 +2,6 @@ import _ from 'lodash';
 import moment from 'moment';
 import React from 'react';
 import { connect } from "react-redux";
-import { Redirect } from "react-router-dom";
 
 
 class EatABetList extends React.Component {
@@ -84,7 +83,7 @@ class EatABetList extends React.Component {
   }
 
 render() {
-  const { betPools, betsLoaded, createdBet } = this.state;
+  const { betPools, betsLoaded } = this.state;
   const { games, web3 } = this.props;
 
   if (games.length === 0) {

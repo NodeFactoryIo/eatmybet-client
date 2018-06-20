@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 const availableBets = ["1", "2", "3"];
 
-Array.prototype.diff = function(a) {
+availableBets.diff = function(a) {
   return this.filter(function(i) {return a.indexOf(i) < 0;});
 };
 
@@ -73,10 +73,10 @@ class MyBetsList extends React.Component {
 
   render() {
 
-    const { games, web3 } = this.props;
+    const { games } = this.props;
     const { bets } = this.state;
 
-    const dateTimeNowWithGameEndOffset = moment.utc().add({ hours: 2});
+    //const dateTimeNowWithGameEndOffset = moment.utc().add({ hours: 2});
 
     if (!bets || games.length === 0) {
       return (
