@@ -199,7 +199,7 @@ render() {
                           <span className="value">{bet.coef / 100}</span>
                         </div>
                         <div className="col-6-12">
-                          <span className="label">Amount</span>
+                          <span>Amount &nbsp; Ξ</span>
                           <input
                             type="text"
                             defaultValue={defaultAmount}
