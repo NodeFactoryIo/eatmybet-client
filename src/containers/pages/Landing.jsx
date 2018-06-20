@@ -66,7 +66,10 @@ class LandingPage extends React.Component {
 
             { hasMetaMask === false || isCorrectNetwork === true ?
               null :
-              <p><span className="unchecked"></span> MetaMask not using correct network, please use MainNet or Ropsten.</p>
+              <p>
+                <span className="unchecked"></span>
+                <div>MetaMask not using correct network, please use MainNet or Ropsten.</div>
+              </p>
             }
           </div>
       </div>

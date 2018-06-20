@@ -36,7 +36,6 @@ button, .button { border:none; border-radius: 2px; display: inline-block; text-d
 .align-right { text-align: right; }
 .align-center { text-align: center; }
 
-
 html, body { font-size: 12px; font-family: sans-serif; width: 100%; color: #0F5778; }
 
 .landing-page { width: 100%; text-align: center; margin: 4rem 0 0; }
@@ -47,7 +46,7 @@ html, body { font-size: 12px; font-family: sans-serif; width: 100%; color: #0F57
     .landing-page .info p { margin-bottom: 34px;line-height: 35px; text-align: left;  }
       .landing-page .info span { display: block; float: left; width: 30px; height: 30px; background-position: center center; background-size: contain; margin: 0 30px 0 0; }
       .landing-page .info span.checked { background-image: url('/circle-checked.png'); }
-      .landing-page .info span.unchecked { background-image: url('/circle-unchecked.png'); }
+      .landing-page .info span.unchecked { background-image: url('/circle-unchecked.png'); margin-bottom: 20px; }
 
   .landing-page h2 { margin: 0 0 2rem; }
   .landing-page .actions { margin-bottom: 8rem; }
@@ -92,12 +91,21 @@ html, body { font-size: 12px; font-family: sans-serif; width: 100%; color: #0F57
     .place-a-bet-wrap .game button:hover, .place-a-bet-wrap .game button.active { background-color:  #0D87C0; color: #fff; }
 
     .place-a-bet-wrap .game .actions { text-align: center; }
-    .place-a-bet-wrap .game .info.inactive { color: #ccc }
+    .place-a-bet-wrap .game .info.inactive { color: #999da3; }
     .place-a-bet-wrap .game .action span { display: block; font-size: 1.2rem; }
 
-    .place-a-bet-wrap .game .action input { line-height: 22px; font-size: 15px; padding: 4px 6px; border-radius: 4px; border: 1px solid #999da3; }
-    .place-a-bet-wrap .game .action .place { color: #0D87C0; text-align: center; line-height: 35px; }
-      .place-a-bet-wrap .game .action .place.inactive { background-color: #b8bbc1; cursor: default; }
+    .place-a-bet-wrap .game .action input {
+        line-height: 22px; font-size: 15px; padding: 4px 6px; border-radius: 4px; border: 1px solid #999da3;
+    }
+
+    .game .action input::placeholder {
+        color: #ccc;
+    }
+
+.place-a-bet-wrap .game .action .place { color: #0D87C0; text-align: center; line-height: 35px; }
+      .place-a-bet-wrap .game .action .place.inactive {
+          background-color: white; cursor: default; color: #999da3; border-color: #999da3;
+      }
       .place-a-bet-wrap .game .action .place.active { color: #fff; text-align: center; line-height: 35px; }
       .place-a-bet-wrap .game .action .place.active:hover { color: #fff; background-color: #0970a0; }
 
@@ -136,8 +144,8 @@ html, body { font-size: 12px; font-family: sans-serif; width: 100%; color: #0F57
     .eat-a-bet-wrap .game .bet button { border: 1px solid #b8bbc1; text-align: center; color:#b8bbc1; }
     .eat-a-bet-wrap .game .bet button.active { background-color:#0D87C0; border-color: #0D87C0; color: #fff; }
 
-    .eat-a-bet-wrap .game .bet span.label {}
-    .eat-a-bet-wrap .game .bet span.value { line-height: 2.5rem; font-size: 1.7rem;  }
+    .eat-a-bet-wrap .game .bet span.label { color: #6d7075; }
+    .eat-a-bet-wrap .game .bet span.value { line-height: 2.5rem; font-size: 1.7rem; color: #6d7075;  }
 
 
 .my-bets-wrap { max-width: 900px; margin: 0 auto; }
@@ -162,7 +170,7 @@ html, body { font-size: 12px; font-family: sans-serif; width: 100%; color: #0F57
       .my-bets-wrap .game button:hover, .my-bets-wrap .game button.active { background-color:  #0D87C0; color: #fff; }
   
       .my-bets-wrap .game .actions { text-align: center; }
-      .my-bets-wrap .game .info.inactive { color: #ccc }
+      .my-bets-wrap .game .info.inactive { color: #999da3; }
       .my-bets-wrap .game .action span { display: block; font-size: 1.2rem; }
   
       .my-bets-wrap .game .action input { line-height: 22px; font-size: 15px; padding: 4px 6px; border-radius: 4px; border: 1px solid #999da3; }
