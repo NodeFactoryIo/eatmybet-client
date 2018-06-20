@@ -8,9 +8,7 @@ class MyBetsList extends React.Component {
     super(props);
 
     this.state = {
-      bets: {},
-      poolsLoaded: false,
-      betsLoaded: false,
+      bets: []
     };
   }
 
@@ -21,29 +19,26 @@ class MyBetsList extends React.Component {
       filter: { creator: web3.eth.defaultAccount },
       fromBlock: 0
     }).then(bets => {
-      const betsWithProperties = bets.map(async function(bet) {
-        const eaters = await contract.methods.getBetPoolEaters(bet.returnValues.betPoolId).call();
-        return {...bet, taken: false, against: false, hasEaters: !!(eaters.length > 0)};
-      });
-
-      Promise.all(betsWithProperties).then(result => {
-        this.setState({ bets: {...this.state.bets, ...result}});
-        this.setState({ poolsLoaded: true });
-      });
+      console.log("created bets", bets)
+      this.loadBetPools(contract, web3, bets);
     });
 
     contract.getPastEvents('BetTaken', {
       filter: { eater: web3.eth.defaultAccount }
     }).then(bets => {
-      const betsWithProperties = bets.map(async function(bet) {
-        const betPool = await contract.methods.betPools(bet.returnValues.betPoolId).call();
-        return {...betPool, taken: true, against: true };
-      });
+      console.log("taken bets", bets)
+      this.loadBetPools(contract, web3, bets);
+    });
+  }
 
-      Promise.all(betsWithProperties).then(result => {
-        this.setState({ bets: {...this.state.bets, ...result}});
-        this.setState({ poolsLoaded: true });
-      });
+  loadBetPools(contract, web3, betPools) {
+    const betsWithProperties = betPools.map(async function(bet) {
+      const betPool = await contract.methods.betPools(bet.returnValues.betPoolId).call();
+      betPool.poolSize = parseFloat(web3.utils.fromWei(betPool.poolSize, "ether")).toFixed(3);
+      return {...betPool, taken: true, against: true };
+    });
+    Promise.all(betsWithProperties).then(result => {
+      this.setState({ bets: [...this.state.bets, ...result]});
     });
   }
 
@@ -64,7 +59,7 @@ class MyBetsList extends React.Component {
   render() {
 
     const { games, web3 } = this.props;
-    const { bets, betsLoaded, poolsLoaded } = this.state;
+    const { bets } = this.state;
 
     const dateTimeNowWithGameEndOffset = moment.utc().add({ hours: 2});
 
@@ -75,8 +70,8 @@ class MyBetsList extends React.Component {
         <div className="my-bets-wrap"><h4 className="loading">Loading...</h4></div>
       )
     }
-
-    if (_.isEmpty(bets) && betsLoaded && poolsLoaded) {
+    console.log("state", this.state);
+    if (bets.length === 0) {
       return (
         <div className="my-bets-wrap"><h2>You have no bets, but you <a href="/">create a new one</a> or <a href="/eat-a-bet">eat an existing one</a></h2></div>
       )
@@ -112,6 +107,8 @@ class MyBetsList extends React.Component {
             actionInfo = 'collect';
           } 
 
+          console.log('bet', bet);
+
           return (
           <div className="game" key={index}>
             <div className="grid grid-pad-small">
@@ -144,14 +141,14 @@ class MyBetsList extends React.Component {
               </div>
 
               <div className="action col-1-4">
-                <div className={`grid grid-pad-small info active}`}>
+                <div className={`grid grid-pad-small info active`}>
                     <div className="col-6-12">
                       <span className="label">Odd</span>
                       <span className="value">{bet.coef / 100}</span>
                     </div>
                     <div className="col-6-12">
                       <span className="label">Amount</span>
-                      <span className="value">{parseFloat(web3.utils.fromWei(bet.amount)).toFixed(3)}</span>
+                      <span className="value">{bet.poolSize}</span>
                     </div>
                   </div>
               </div>
