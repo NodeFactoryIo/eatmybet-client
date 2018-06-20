@@ -100,8 +100,9 @@ class PlaceABetList extends React.Component {
       <div className="place-a-bet-wrap">
         {games.map(function(game, index){
 
-          if(moment.utc(game.dateTime) <= minGameDateTime)
+          if (moment.utc(game.dateTime) <= minGameDateTime) {
             return '';
+          }
 
           const playedBet = !!this.getGameById(game.gameId);
           const validateBet = !!this.getGameById(game.gameId) &&
