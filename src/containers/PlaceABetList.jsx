@@ -1,7 +1,9 @@
 import React from 'react';
 import { connect } from "react-redux";
 import moment from 'moment';
+import { Redirect } from "react-router-dom";
 import Loading from "../components/Loading";
+import { getTransactionReceiptMined } from "../util/transactions";
 
 
 class PlaceABetList extends React.Component {
@@ -14,6 +16,8 @@ class PlaceABetList extends React.Component {
       outcome: null,
       amount: null,
       bettingGames: {},
+      mining: false,
+      toMyBets: false,
     };
   }
 
@@ -59,15 +63,34 @@ class PlaceABetList extends React.Component {
     const gameBet = this.getGameById(gameId);
 
     contract.methods.makeBet(gameId, gameBet.bet, parseInt(gameBet.coef * 100, 10))
-      .send({value: gameBet.amount, from: web3.eth.defaultAccount });
+      .send({value: gameBet.amount, from: web3.eth.defaultAccount })
+      .then(tx => {
+        this.setState({ mining: true });
+        getTransactionReceiptMined(web3, tx.transactionHash)
+          .then(() => {
+            this.setState({ mining: false });
+            this.setState({ toMyBets: true });
+          })
+          .catch(() => {
+            alert("Transaction has failed, please try again.");
+            this.setState({ mining: false });
+          })
+      })
+      .catch(() => {
+        alert("Invalid transaction, something is wrong here...");
+      })
   }
 
   render() {
     const { games } = this.props;
-    const { bettingGames } = this.state;
+    const { bettingGames, mining, toMyBets } = this.state;
     const minGameDateTime = moment.utc().add({ hours: 2});
 
-    if (games.length === 0) {
+    if (!mining && toMyBets) {
+      return <Redirect to="/my-bets" />
+    }
+
+    if (games.length === 0 || mining) {
       return (
         <Loading />
       )
@@ -81,7 +104,8 @@ class PlaceABetList extends React.Component {
             return '';
 
           const playedBet = !!this.getGameById(game.gameId);
-          const validateBet = !!this.getGameById(game.gameId) && this.getGameById(game.gameId).coef > 0 && this.getGameById(game.gameId).amount > 0;
+          const validateBet = !!this.getGameById(game.gameId) &&
+            this.getGameById(game.gameId).coef > 0 && this.getGameById(game.gameId).amount > 0;
 
           return (
           <div className="place-a-bet game" key={index}>
