@@ -28,7 +28,6 @@ class EatABetList extends React.Component {
       Promise.all(promises).then(betPools => {
         betPools.forEach(async (betPool, index) => {
           const remainingAmount = await contract.methods.getRemainingBetPoolAmount(betPool);
-          console.log(remainingAmount);
           if (betPool.owner === this.props.web3.eth.defaultAccount || remainingAmount <= 0) {
             return true;
           }
@@ -89,7 +88,11 @@ render() {
   const { games, web3 } = this.props;
 
   if (games.length === 0) {
-    return 'Loading';
+    return (
+      <div className="eat-a-bet-wrap">
+        <h4 className="loading">Loading...</h4>
+      </div>
+    );
   }
 
   let noBetsForExistingGames = true;
