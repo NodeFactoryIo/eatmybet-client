@@ -25,14 +25,12 @@ class MyBetsList extends React.Component {
       filter: { creator: web3.eth.defaultAccount },
       fromBlock: 0
     }).then(bets => {
-      console.log("created bets", bets)
       this.loadBetPools(contract, web3, bets);
     });
 
     contract.getPastEvents('BetTaken', {
       filter: { eater: web3.eth.defaultAccount }
     }).then(bets => {
-      console.log("taken bets", bets)
       this.loadBetPools(contract, web3, bets);
     });
   }
@@ -40,9 +38,7 @@ class MyBetsList extends React.Component {
   loadBetPools(contract, web3, betPools) {
     const betsWithProperties = betPools.map(async function(bet) {
       const betPoolId = bet.returnValues.betPoolId;
-      console.log('id', betPoolId);
       const betPool = await contract.methods.betPools(betPoolId).call();
-      console.log('pool', betPool);
       betPool.poolSize = parseFloat(web3.utils.fromWei(betPool.poolSize, "ether")).toFixed(3);
       if(betPool.owner !== web3.eth.defaultAccount) {
         betPool.bettingOn = availableBets.diff(betPool.bet);
@@ -82,14 +78,11 @@ class MyBetsList extends React.Component {
 
     const dateTimeNowWithGameEndOffset = moment.utc().add({ hours: 2});
 
-    console.log(bets);
-
     if (!bets || games.length === 0) {
       return (
         <div className="my-bets-wrap"><h4 className="loading">Loading...</h4></div>
       )
     }
-    console.log("state", this.state);
     if (bets.length === 0) {
       return (
         <div className="my-bets-wrap"><h2>You have no bets, but you <a href="/">create a new one</a> or <a href="/eat-a-bet">eat an existing one</a></h2></div>
@@ -100,8 +93,6 @@ class MyBetsList extends React.Component {
       <div className="my-bets-wrap">
         {Object.values(bets).map(function(bet, index){
           const game = _.filter(games, { gameId: bet.gameId})[0];
-
-          console.log(bet);
 
           let actionInfo = 'cancel';
           let result = "1";
@@ -124,9 +115,7 @@ class MyBetsList extends React.Component {
 
           if (isBetTaken && betHasResult && isUserWinner) {
             actionInfo = 'collect';
-          } 
-
-          console.log('bet', bet);
+          }
 
           return (
           <div className="game" key={index}>
@@ -137,21 +126,21 @@ class MyBetsList extends React.Component {
                     <span className="date">{ moment.utc(game.dateTime).local().format('DD.MM.YYYY') }</span><br/>  
                     <span className="time">{ moment.utc(game.dateTime).local().format('HH:mm') }</span>
                   </div>
-                  <div className="home col-4-12">
-                    <button disabled className={"home " + (bet.bettingOn.indexOf("1") !== -1 ? 'placed' : 'inactive')}>
+                  <div className="home action col-4-12">
+                    <button disabled className={"home place " + (bet.bettingOn.indexOf("1") !== -1 ? 'active' : 'inactive')}>
                       <div className="flag" style={{ backgroundImage: 'url(/images/flags/' + game.homeTeamNameShort + '.png'  }} />
                       {game.homeTeamNameShort}
                     </button>
                   </div>
 
-                  <div className="seperator col-2-12">
-                  <button disabled className={"draw " + (bet.bettingOn.indexOf("2") !== -1 ? 'placed' : 'inactive')}>
+                  <div className="seperator action col-2-12">
+                  <button disabled className={"draw place " + (bet.bettingOn.indexOf("2") !== -1 ? 'active' : 'inactive')}>
                       X
                     </button>
                   </div>
 
-                  <div className="away col-4-12">
-                  <button disabled className={"away " + (bet.bettingOn.indexOf("3") !== -1 ? 'placed' : 'inactive')}>
+                  <div className="away action col-4-12">
+                  <button disabled className={"away place " + (bet.bettingOn.indexOf("3") !== -1 ? 'active' : 'inactive')}>
                       <div className="flag" style={{ backgroundImage: 'url(/images/flags/' + game.awayTeamNameShort + '.png'  }} />
                       {game.awayTeamNameShort}
                     </button>
