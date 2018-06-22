@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import moment from 'moment';
 import _ from 'lodash';
 import Loading from "../components/Loading";
+import { getTransactionReceiptMined } from '../util/transactions'
 
 const availableBets = ["1", "2", "3"];
 
@@ -15,7 +16,8 @@ class MyBetsList extends React.Component {
     super(props);
 
     this.state = {
-      bets: []
+      bets: [],
+      mining: false
     };
   }
 
@@ -40,6 +42,8 @@ class MyBetsList extends React.Component {
     const betsWithProperties = betPools.map(async function(bet) {
       const betPoolId = bet.returnValues.betPoolId;
       const betPool = await contract.methods.betPools(betPoolId).call();
+      if(betPool.bet === "0") return {};
+      betPool.betPoolId = betPoolId;
       betPool.poolSize = parseFloat(web3.utils.fromWei(betPool.poolSize, "ether")).toFixed(3);
       if(betPool.owner !== web3.eth.defaultAccount) {
         betPool.bettingOn = availableBets.diff(betPool.bet);
@@ -54,6 +58,11 @@ class MyBetsList extends React.Component {
       return {...betPool};
     });
     Promise.all(betsWithProperties).then(result => {
+      //remove deleted bets
+      result = result.filter(function(bet) {
+        console.log(bet);
+        return !_.isEmpty(bet);
+      })
       this.setState({ bets: [...this.state.bets, ...result]});
     });
   }
@@ -72,14 +81,38 @@ class MyBetsList extends React.Component {
       })
   }
 
+  cancelBet(betPoolId) {
+    const { contract, web3 } = this.props;
+    contract.methods.cancelBet(betPoolId).send({from: web3.eth.defaultAccount})
+      .then(tx => {
+        this.setState({mining: true})
+        getTransactionReceiptMined(web3, tx.transactionHash)
+          .then(() => {
+            let {bets} = this.state;
+            const index = bets.map(function(bet) {return bet.betPoolId}).indexOf(betPoolId);
+            bets.splice(index, 1);
+            this.setState({ bets, mining: false });
+          })
+          .catch(() => {
+            alert("Transaction has failed, please try again.");
+            this.setState({ mining: false });
+          })
+      })
+      .catch((error) => {
+        console.log(error);
+        alert("Invalid transaction, something is wrong here...");
+        this.setState({ mining: false });
+      })
+  }
+
   render() {
 
     const { games } = this.props;
-    const { bets } = this.state;
+    const { bets, mining } = this.state;
 
     //const dateTimeNowWithGameEndOffset = moment.utc().add({ hours: 2});
 
-    if (!bets || games.length === 0) {
+    if (mining) {
       return (
         <Loading />
       )
@@ -165,7 +198,7 @@ class MyBetsList extends React.Component {
               <div className="action col-1-6">
                 {{
                   'cancel': (
-                    <button className="cancel" onClick={() => this.getResults(bet.betPoolId)}>Cancel</button>
+                    <button className="cancel" onClick={() => this.cancelBet(bet.betPoolId)}>Cancel</button>
                   ),
                   'waiting': (
                     <span className="button waiting">Waiting...</span>
