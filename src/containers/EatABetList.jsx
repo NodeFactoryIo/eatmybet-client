@@ -2,6 +2,9 @@ import _ from 'lodash';
 import moment from 'moment';
 import React from 'react';
 import { connect } from "react-redux";
+import { Redirect } from "react-router-dom";
+import Loading from "../components/Loading";
+import { getTransactionReceiptMined } from "../util/transactions";
 
 
 class EatABetList extends React.Component {
@@ -12,6 +15,8 @@ class EatABetList extends React.Component {
       betPools: {},
       betsLoaded: false,
       createdBet: {},
+      toMyBets: false,
+      mining: false,
     };
 
     this.onSubmit = this.onSubmit.bind(this);
@@ -75,23 +80,35 @@ class EatABetList extends React.Component {
 
     const amount = createdBet.amount || Math.floor(bet.poolSize / (bet.coef / 100));
 
-    console.log(amount);
-    console.log(bet);
-
     contract.methods.takeBets([bet.id], [amount])
-      .send({ value: createdBet.amount, from: web3.eth.defaultAccount });
+      .send({ value: createdBet.amount, from: web3.eth.defaultAccount })
+      .then(tx => {
+        this.setState({ mining: true });
+        getTransactionReceiptMined(web3, tx.transactionHash)
+          .then(() => {
+            this.setState({ mining: false });
+            this.setState({ toMyBets: true });
+          })
+          .catch(() => {
+            alert("Transaction has failed, please try again.");
+            this.setState({ mining: false });
+          })
+      })
+      .catch(() => {
+        alert("Invalid transaction, something is wrong here...");
+      })
   }
 
 render() {
-  const { betPools, betsLoaded } = this.state;
+  const { betPools, betsLoaded, mining, toMyBets } = this.state;
   const { games, web3 } = this.props;
 
-  if (games.length === 0) {
-    return (
-      <div className="eat-a-bet-wrap">
-        <h4 className="loading">Loading...</h4>
-      </div>
-    );
+  if (!mining && toMyBets) {
+    return <Redirect to="/my-bets" />
+  }
+
+  if (games.length === 0 || mining) {
+    return <Loading/>;
   }
 
   let noBetsForExistingGames = true;

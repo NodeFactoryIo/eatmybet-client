@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from "react-redux";
 import moment from 'moment';
 import _ from 'lodash';
+import Loading from "../components/Loading";
 
 const availableBets = ["1", "2", "3"];
 
@@ -80,7 +81,7 @@ class MyBetsList extends React.Component {
 
     if (!bets || games.length === 0) {
       return (
-        <div className="my-bets-wrap"><h4 className="loading">Loading...</h4></div>
+        <Loading />
       )
     }
     if (bets.length === 0) {

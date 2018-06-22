@@ -13,6 +13,7 @@
     "react-router-dom": "^4.3.1",
     "react-router-redux": "^4.0.8",
     "react-scripts": "1.1.4",
+    "react-spinkit": "^3.0.0",
     "react-web3": "^1.0.0",
     "redux": "^4.0.0",
     "redux-logger": "^3.0.6",
