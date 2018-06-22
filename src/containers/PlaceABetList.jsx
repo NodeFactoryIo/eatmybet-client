@@ -155,11 +155,21 @@ class PlaceABetList extends React.Component {
                 <div className={`grid grid-pad-small info ${!playedBet ? 'inactive' : '' }`}>
                     <div className="col-6-12">
                       <span>Odd</span>
-                      <input type="text" disabled={!playedBet} onChange={(e) => this.onCoefChange(game.gameId, e)} />
+                      <input
+                        type="text"
+                        placeholder="e.g. 1.5"
+                        disabled={!playedBet}
+                        onChange={(e) => this.onCoefChange(game.gameId, e)}
+                      />
                     </div>
                     <div className="col-6-12">
-                      <span>Amount</span>
-                      <input type="text" disabled={!playedBet} onChange={(e) => this.onAmountChange(game.gameId, e)}  />
+                      <span>Amount &nbsp; Ξ</span>
+                      <input
+                        type="text"
+                        placeholder="e.g. 0.34"
+                        disabled={!playedBet}
+                        onChange={(e) => this.onAmountChange(game.gameId, e)}
+                      />
                     </div>
                   </div>
                 

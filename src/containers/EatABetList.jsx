@@ -100,7 +100,7 @@ class EatABetList extends React.Component {
   }
 
 render() {
-  const { betPools, betsLoaded, createdBet, mining, toMyBets } = this.state;
+  const { betPools, betsLoaded, mining, toMyBets } = this.state;
   const { games, web3 } = this.props;
 
   if (!mining && toMyBets) {
@@ -215,7 +215,7 @@ render() {
                           <span className="value">{bet.coef / 100}</span>
                         </div>
                         <div className="col-6-12">
-                          <span className="label">Amount</span>
+                          <span>Amount &nbsp; Ξ</span>
                           <input
                             type="text"
                             defaultValue={defaultAmount}

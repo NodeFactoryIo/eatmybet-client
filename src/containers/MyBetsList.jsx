@@ -4,14 +4,18 @@ import moment from 'moment';
 import _ from 'lodash';
 import Loading from "../components/Loading";
 
+const availableBets = ["1", "2", "3"];
+
+availableBets.diff = function(a) {
+  return this.filter(function(i) {return a.indexOf(i) < 0;});
+};
+
 class MyBetsList extends React.Component {
   constructor(props){
     super(props);
 
     this.state = {
-      bets: {},
-      poolsLoaded: false,
-      betsLoaded: false,
+      bets: []
     };
   }
 
@@ -22,29 +26,35 @@ class MyBetsList extends React.Component {
       filter: { creator: web3.eth.defaultAccount },
       fromBlock: 0
     }).then(bets => {
-      const betsWithProperties = bets.map(async function(bet) {
-        const eaters = await contract.methods.getBetPoolEaters(bet.returnValues.betPoolId).call();
-        return {...bet, taken: false, against: false, hasEaters: !!(eaters.length > 0)};
-      });
-
-      Promise.all(betsWithProperties).then(result => {
-        this.setState({ bets: {...this.state.bets, ...result}});
-        this.setState({ poolsLoaded: true });
-      });
+      this.loadBetPools(contract, web3, bets);
     });
 
     contract.getPastEvents('BetTaken', {
       filter: { eater: web3.eth.defaultAccount }
     }).then(bets => {
-      const betsWithProperties = bets.map(async function(bet) {
-        const betPool = await contract.methods.betPools(bet.returnValues.betPoolId).call();
-        return {...betPool, taken: true, against: true };
-      });
+      this.loadBetPools(contract, web3, bets);
+    });
+  }
 
-      Promise.all(betsWithProperties).then(result => {
-        this.setState({ bets: {...this.state.bets, ...result}});
-        this.setState({ poolsLoaded: true });
-      });
+  loadBetPools(contract, web3, betPools) {
+    const betsWithProperties = betPools.map(async function(bet) {
+      const betPoolId = bet.returnValues.betPoolId;
+      const betPool = await contract.methods.betPools(betPoolId).call();
+      betPool.poolSize = parseFloat(web3.utils.fromWei(betPool.poolSize, "ether")).toFixed(3);
+      if(betPool.owner !== web3.eth.defaultAccount) {
+        betPool.bettingOn = availableBets.diff(betPool.bet);
+        betPool.amount = await contract.methods.getBetPoolTakenBets(betPoolId, web3.eth.defaultAccount).call();
+        betPool.amount = parseFloat(web3.utils.fromWei(betPool.amount, "ether")).toFixed(3);
+        betPool.taken = true;
+      } else {
+        betPool.bettingOn = [betPool.bet];
+        betPool.amount = betPool.poolSize;
+        betPool.taken = (await contract.methods.getBetPoolTakenAmount(betPoolId) > 0);
+      }
+      return {...betPool};
+    });
+    Promise.all(betsWithProperties).then(result => {
+      this.setState({ bets: [...this.state.bets, ...result]});
     });
   }
 
@@ -64,20 +74,17 @@ class MyBetsList extends React.Component {
 
   render() {
 
-    const { games, web3 } = this.props;
-    const { bets, betsLoaded, poolsLoaded } = this.state;
+    const { games } = this.props;
+    const { bets } = this.state;
 
-    const dateTimeNowWithGameEndOffset = moment.utc().add({ hours: 2});
-
-    console.log(bets);
+    //const dateTimeNowWithGameEndOffset = moment.utc().add({ hours: 2});
 
     if (!bets || games.length === 0) {
       return (
         <Loading />
       )
     }
-
-    if (_.isEmpty(bets) && betsLoaded && poolsLoaded) {
+    if (bets.length === 0) {
       return (
         <div className="my-bets-wrap"><h2>You have no bets, but you <a href="/">create a new one</a> or <a href="/eat-a-bet">eat an existing one</a></h2></div>
       )
@@ -88,14 +95,12 @@ class MyBetsList extends React.Component {
         {Object.values(bets).map(function(bet, index){
           const game = _.filter(games, { gameId: bet.gameId})[0];
 
-          console.log(bet);
-
           let actionInfo = 'cancel';
-          
+          let result = "1";
           let isBetTaken = bet.taken;
           let waitingForGameOutcome = true; // moment.utc(game.dateTime) < dateTimeNowWithGameEndOffset
-          let betHasResult = false;
-          let isUserWinner = false;
+          let betHasResult = !result;
+          let isUserWinner = bet.bettingOn.indexOf(result) !== -1;
 
           if (isBetTaken) { 
             actionInfo = 'none';
@@ -111,7 +116,7 @@ class MyBetsList extends React.Component {
 
           if (isBetTaken && betHasResult && isUserWinner) {
             actionInfo = 'collect';
-          } 
+          }
 
           return (
           <div className="game" key={index}>
@@ -122,21 +127,21 @@ class MyBetsList extends React.Component {
                     <span className="date">{ moment.utc(game.dateTime).local().format('DD.MM.YYYY') }</span><br/>  
                     <span className="time">{ moment.utc(game.dateTime).local().format('HH:mm') }</span>
                   </div>
-                  <div className="home col-4-12">
-                    <button disabled className={"home " + (bet.bet === "1" ? 'placed' : 'inactive')}>
+                  <div className="home action col-4-12">
+                    <button disabled className={"home place " + (bet.bettingOn.indexOf("1") !== -1 ? 'active' : 'inactive')}>
                       <div className="flag" style={{ backgroundImage: 'url(/images/flags/' + game.homeTeamNameShort + '.png'  }} />
                       {game.homeTeamNameShort}
                     </button>
                   </div>
 
-                  <div className="seperator col-2-12">
-                  <button disabled className={"draw " + (bet.bet === "2" ? 'placed' : 'inactive')}>
+                  <div className="seperator action col-2-12">
+                  <button disabled className={"draw place " + (bet.bettingOn.indexOf("2") !== -1 ? 'active' : 'inactive')}>
                       X
                     </button>
                   </div>
 
-                  <div className="away col-4-12">
-                  <button disabled className={"away " + (bet.bet === "3" ? 'placed' : 'inactive') + (bet.bet === "3" ? 'placed' : 'inactive')}>
+                  <div className="away action col-4-12">
+                  <button disabled className={"away place " + (bet.bettingOn.indexOf("3") !== -1 ? 'active' : 'inactive')}>
                       <div className="flag" style={{ backgroundImage: 'url(/images/flags/' + game.awayTeamNameShort + '.png'  }} />
                       {game.awayTeamNameShort}
                     </button>
@@ -145,14 +150,14 @@ class MyBetsList extends React.Component {
               </div>
 
               <div className="action col-1-4">
-                <div className={`grid grid-pad-small info active}`}>
+                <div className={`grid grid-pad-small info active`}>
                     <div className="col-6-12">
                       <span className="label">Odd</span>
                       <span className="value">{bet.coef / 100}</span>
                     </div>
                     <div className="col-6-12">
                       <span className="label">Amount</span>
-                      <span className="value">{parseFloat(web3.utils.fromWei(bet.amount)).toFixed(3)}</span>
+                      <span className="value">{bet.amount}</span>
                     </div>
                   </div>
               </div>
@@ -163,10 +168,10 @@ class MyBetsList extends React.Component {
                     <button className="cancel" onClick={() => this.getResults(bet.betPoolId)}>Cancel</button>
                   ),
                   'waiting': (
-                    <span className="button waiting">...</span>
+                    <span className="button waiting">Waiting...</span>
                   ),
                   'collect': (
-                    <button className="collect" onClick={() => this.getResults(bet.betPoolId)}>Cancel</button>
+                    <button className="collect" onClick={() => this.getResults(bet.betPoolId)}>Collect</button>
                   ),
                   default: (
                     <span></span>

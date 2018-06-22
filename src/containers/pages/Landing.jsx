@@ -69,14 +69,15 @@ class LandingPage extends React.Component {
 
           <div className="info">
             {hasMetaMask === true && metaMaskEnabled === true ?
-              <p><span className="checked"></span> MetaMask browser extension installed</p> :
-              <p><span className="unchecked"></span> Please install <a href="https://metamask.io/">MetaMask</a> addon.
+              <p><span className="checked"/> MetaMask browser extension installed</p> :
+              <p><span className="unchecked"/> Please install <a href="https://metamask.io/">MetaMask</a> addon.
               </p>
             }
 
             {hasMetaMask === false || isCorrectNetwork === true ?
               null :
-              <p><span className="unchecked"></span> MetaMask not using correct network, please use MainNet or Ropsten.
+              <p>
+                <span className="unchecked"/> MetaMask not using correct network, please use MainNet or Ropsten.
               </p>
             }
           </div>
