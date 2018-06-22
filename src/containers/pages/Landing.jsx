@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from "react-redux";
 import _ from 'lodash';
 import { bindActionCreators } from "redux";
+import Loading from "../../components/Loading";
 
 import { networkID } from "../../config";
 import { initWeb3 } from "../../redux/actions";
@@ -13,12 +14,15 @@ class LandingPage extends React.Component {
     this.state = {
       isCorrectNetwork: false,
       metaMaskEnabled: false,
+      loadingNetwork: true,
+      loadingMetamask: true,
     }
   }
 
   checkMetaMask() {
     if (window.web3) {
       this.setState({ metaMaskEnabled: true });
+      this.setState({ loadingMetamask: false });
     }
   }
 
@@ -26,6 +30,7 @@ class LandingPage extends React.Component {
     web3.eth.net.getId((err, netId) => {
       if (netId === parseInt(networkID, 10)) {
         this.setState({ isCorrectNetwork: true });
+        this.setState({ loadingNetwork: false });
       }
     });
   }
@@ -44,36 +49,41 @@ class LandingPage extends React.Component {
   }
 
   render() {
-    const { isCorrectNetwork, metaMaskEnabled } = this.state;
+    const { isCorrectNetwork, metaMaskEnabled, loadingNetwork, loadingMetamask } = this.state;
     const { hasMetaMask } = this.props;
+    const loading = loadingMetamask || loadingNetwork;
 
-    if (isCorrectNetwork && hasMetaMask && metaMaskEnabled) {
-      return this.props.children;
+    if (loading) {
+      return <Loading />;
     }
 
-    return (
-      <div className="landing-page">
-          <img className="logo" src="./images/logo/logo-vert.png" alt="EatMyBet" />
+    if (!loading && isCorrectNetwork && hasMetaMask && metaMaskEnabled) {
+      return this.props.children;
+    } else {
+      return (
+        <div className="landing-page">
+          <img className="logo" src="./images/logo/logo-vert.png" alt="EatMyBet"/>
           <h1>
             Welcome!
           </h1>
 
           <div className="info">
-            { hasMetaMask === true && metaMaskEnabled === true ?
-              <p><span className="checked"></span> MetaMask browser extension installed</p> : 
-              <p><span className="unchecked"></span> Please install <a href="https://metamask.io/" >MetaMask</a> addon.</p>
+            {hasMetaMask === true && metaMaskEnabled === true ?
+              <p><span className="checked"/> MetaMask browser extension installed</p> :
+              <p><span className="unchecked"/> Please install <a href="https://metamask.io/">MetaMask</a> addon.
+              </p>
             }
 
-            { hasMetaMask === false || isCorrectNetwork === true ?
+            {hasMetaMask === false || isCorrectNetwork === true ?
               null :
               <p>
-                <span className="unchecked"></span>
-                <div>MetaMask not using correct network, please use MainNet or Ropsten.</div>
+                <span className="unchecked"/> MetaMask not using correct network, please use MainNet or Ropsten.
               </p>
             }
           </div>
-      </div>
-    );
+        </div>
+      );
+    }
   }
 }
 

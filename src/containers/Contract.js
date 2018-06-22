@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import _ from 'lodash';
+import Loading from "../components/Loading";
 
 import { fetchContracts, fetchGames } from "../redux/actions";
 
@@ -13,7 +14,7 @@ class ContractLoader extends React.Component {
 
   render() {
     const { contract, web3 } = this.props;
-    return _.isEmpty(contract) || _.isEmpty(web3) ? 'Loading...' : this.props.children;
+    return _.isEmpty(contract) || _.isEmpty(web3) ? <Loading /> : this.props.children;
   }
 }
 

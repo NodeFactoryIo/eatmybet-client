@@ -2,6 +2,9 @@ import React from 'react';
 import { connect } from "react-redux";
 import moment from 'moment';
 import _ from 'lodash';
+import Loading from "../components/Loading";
+import { getTransactionReceiptMined } from '../util/transactions'
+import { fetchGameResult } from '../redux/api'
 
 const availableBets = ["1", "2", "3"];
 
@@ -14,13 +17,17 @@ class MyBetsList extends React.Component {
     super(props);
 
     this.state = {
-      bets: []
+      bets: [],
+      mining: false
     };
   }
 
   componentDidMount() {
     const { contract, web3 } = this.props;
+    this.load(contract, web3);
+  }
 
+  load(contract, web3) {
     contract.getPastEvents('PoolCreated', {
       filter: { creator: web3.eth.defaultAccount },
       fromBlock: 0
@@ -39,6 +46,8 @@ class MyBetsList extends React.Component {
     const betsWithProperties = betPools.map(async function(bet) {
       const betPoolId = bet.returnValues.betPoolId;
       const betPool = await contract.methods.betPools(betPoolId).call();
+      if(betPool.bet === "0") return {};
+      betPool.betPoolId = betPoolId;
       betPool.poolSize = parseFloat(web3.utils.fromWei(betPool.poolSize, "ether")).toFixed(3);
       if(betPool.owner !== web3.eth.defaultAccount) {
         betPool.bettingOn = availableBets.diff(betPool.bet);
@@ -48,39 +57,79 @@ class MyBetsList extends React.Component {
       } else {
         betPool.bettingOn = [betPool.bet];
         betPool.amount = betPool.poolSize;
-        betPool.taken = (await contract.methods.getBetPoolTakenAmount(betPoolId) > 0);
+        betPool.taken = await contract.methods.getBetPoolTakenAmount(betPoolId).call() > 0;
+      }
+      if(betPool.taken) {
+        let gameResult = await fetchGameResult(betPool.gameId);
+        betPool.gameResult = gameResult.r;
       }
       return {...betPool};
     });
     Promise.all(betsWithProperties).then(result => {
+      //remove deleted bets
+      result = result.filter(function(bet) {
+        return !_.isEmpty(bet);
+      })
       this.setState({ bets: [...this.state.bets, ...result]});
     });
   }
 
-  getResults(betPoolId) {
-    const { contract } = this.props;
+  withdraw(betPoolId) {
+    const { contract, web3 } = this.props;
+    contract.methods.claimBetRewards([betPoolId]).send({from: web3.eth.defaultAccount})
+      .then(tx => {
+        this.setState({mining: true})
+        getTransactionReceiptMined(web3, tx.transactionHash)
+          .then(() => {
+            this.load(contract, web3);
+            this.setState({ mining: false });
+          })
+          .catch(() => {
+            alert("Transaction has failed, please try again.");
+            this.setState({ mining: false });
+          })
+      })
+      .catch((error) => {
+        console.log(error);
+        alert("Invalid transaction, something is wrong here...");
+        this.setState({ mining: false });
+      })
+  }
 
-    contract.methods.betPools(betPoolId).call()
-      .then(response => {
-        const result = response.result;
-        console.log('Result is: ', result);
-
-        if (result === 0) {
-          alert("No results yet!");
-        }
+  cancelBet(betPoolId) {
+    const { contract, web3 } = this.props;
+    contract.methods.cancelBet(betPoolId).send({from: web3.eth.defaultAccount})
+      .then(tx => {
+        this.setState({mining: true})
+        getTransactionReceiptMined(web3, tx.transactionHash)
+          .then(() => {
+            let {bets} = this.state;
+            const index = bets.map(function(bet) {return bet.betPoolId}).indexOf(betPoolId);
+            bets.splice(index, 1);
+            this.setState({ bets, mining: false });
+          })
+          .catch(() => {
+            alert("Transaction has failed, please try again.");
+            this.setState({ mining: false });
+          })
+      })
+      .catch((error) => {
+        console.log(error);
+        alert("Invalid transaction, something is wrong here...");
+        this.setState({ mining: false });
       })
   }
 
   render() {
 
     const { games } = this.props;
-    const { bets } = this.state;
+    const { bets, mining } = this.state;
 
     //const dateTimeNowWithGameEndOffset = moment.utc().add({ hours: 2});
 
-    if (!bets || games.length === 0) {
+    if (mining) {
       return (
-        <div className="my-bets-wrap"><h4 className="loading">Loading...</h4></div>
+        <Loading />
       )
     }
     if (bets.length === 0) {
@@ -95,11 +144,10 @@ class MyBetsList extends React.Component {
           const game = _.filter(games, { gameId: bet.gameId})[0];
 
           let actionInfo = 'cancel';
-          let result = "1";
           let isBetTaken = bet.taken;
-          let waitingForGameOutcome = true; // moment.utc(game.dateTime) < dateTimeNowWithGameEndOffset
-          let betHasResult = !result;
-          let isUserWinner = bet.bettingOn.indexOf(result) !== -1;
+          let waitingForGameOutcome = bet.gameResult === -1; // moment.utc(game.dateTime) < dateTimeNowWithGameEndOffset
+          let betHasResult = bet.gameResult > 0;
+          let isUserWinner = bet.bettingOn.indexOf(bet.gameResult.toString()) !== -1;
           let eatenABet = bet.bettingOn.length > 1;
 
           if (isBetTaken) { 
@@ -164,14 +212,14 @@ class MyBetsList extends React.Component {
 
               <div className="action col-1-6">
                 {{
-                  'collect': (
-                    <button className="collect" onClick={() => this.getResults(bet.betPoolId)}>Collect</button>
+                  'cancel': (
+                    <button className="cancel" onClick={() => this.cancelBet(bet.betPoolId)}>Cancel</button>
                   ),
                   'waiting': (
                     <span className="button waiting">Waiting...</span>                    
                   ),
-                  'cancel': (
-                    <button className="cancel" onClick={() => this.getResults(bet.betPoolId)}>Cancel</button>
+                  'collect': (
+                    <button className="collect" onClick={() => this.withdraw(bet.betPoolId)}>Collect</button>
                   ),
                   default: (
                     <span className="button done">Done</span>                    
