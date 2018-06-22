@@ -104,10 +104,11 @@ render() {
     }
   }
 
+  
   if ((_.isEmpty(betPools) || noBetsForExistingGames) && betsLoaded) {
     return (
       <div className="eat-a-bet-wrap">
-        <h2>No active bets, but you <a href="/">create a new one</a></h2>
+        <h2 class="empty">There are no active bets, but you can <a class="place" href="/">place a bet</a></h2>
       </div>
     )
   }

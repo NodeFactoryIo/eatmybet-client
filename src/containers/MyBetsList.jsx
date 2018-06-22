@@ -85,7 +85,7 @@ class MyBetsList extends React.Component {
     }
     if (bets.length === 0) {
       return (
-        <div className="my-bets-wrap"><h2>You have no bets, but you <a href="/">create a new one</a> or <a href="/eat-a-bet">eat an existing one</a></h2></div>
+        <div className="my-bets-wrap"><h2>You have no bets, but you can <a class="place" href="/">place a bet</a> or <a class="eat" href="/eat-a-bet">eat abet</a></h2></div>
       )
     }
 
@@ -100,6 +100,7 @@ class MyBetsList extends React.Component {
           let waitingForGameOutcome = true; // moment.utc(game.dateTime) < dateTimeNowWithGameEndOffset
           let betHasResult = !result;
           let isUserWinner = bet.bettingOn.indexOf(result) !== -1;
+          let eatenABet = bet.bettingOn.length > 1;
 
           if (isBetTaken) { 
             actionInfo = 'none';
@@ -116,9 +117,9 @@ class MyBetsList extends React.Component {
           if (isBetTaken && betHasResult && isUserWinner) {
             actionInfo = 'collect';
           }
-
+          
           return (
-          <div className="game" key={index}>
+          <div className={"game " + (eatenABet ? "eat":"place")} key={index}>
             <div className="grid grid-pad-small">
               <div className="col-7-12">
                 <div className="grid grid-pad-small info"> 
@@ -126,20 +127,20 @@ class MyBetsList extends React.Component {
                     <span className="date">{ moment.utc(game.dateTime).local().format('DD.MM.YYYY') }</span><br/>  
                     <span className="time">{ moment.utc(game.dateTime).local().format('HH:mm') }</span>
                   </div>
-                  <div className="home action col-4-12">
+                  <div className="home info col-4-12">
                     <button disabled className={"home place " + (bet.bettingOn.indexOf("1") !== -1 ? 'active' : 'inactive')}>
                       <div className="flag" style={{ backgroundImage: 'url(/images/flags/' + game.homeTeamNameShort + '.png'  }} />
                       {game.homeTeamNameShort}
                     </button>
                   </div>
 
-                  <div className="seperator action col-2-12">
+                  <div className="seperator info col-2-12">
                   <button disabled className={"draw place " + (bet.bettingOn.indexOf("2") !== -1 ? 'active' : 'inactive')}>
                       X
                     </button>
                   </div>
 
-                  <div className="away action col-4-12">
+                  <div className="away info col-4-12">
                   <button disabled className={"away place " + (bet.bettingOn.indexOf("3") !== -1 ? 'active' : 'inactive')}>
                       <div className="flag" style={{ backgroundImage: 'url(/images/flags/' + game.awayTeamNameShort + '.png'  }} />
                       {game.awayTeamNameShort}
@@ -155,7 +156,7 @@ class MyBetsList extends React.Component {
                       <span className="value">{bet.coef / 100}</span>
                     </div>
                     <div className="col-6-12">
-                      <span className="label">Amount</span>
+                      <span className="label">Amount &nbsp; Ξ</span>
                       <span className="value">{bet.amount}</span>
                     </div>
                   </div>
@@ -163,17 +164,17 @@ class MyBetsList extends React.Component {
 
               <div className="action col-1-6">
                 {{
-                  'cancel': (
-                    <button className="cancel" onClick={() => this.getResults(bet.betPoolId)}>Cancel</button>
-                  ),
-                  'waiting': (
-                    <span className="button waiting">Waiting...</span>
-                  ),
                   'collect': (
                     <button className="collect" onClick={() => this.getResults(bet.betPoolId)}>Collect</button>
                   ),
+                  'waiting': (
+                    <span className="button waiting">Waiting...</span>                    
+                  ),
+                  'cancel': (
+                    <button className="cancel" onClick={() => this.getResults(bet.betPoolId)}>Cancel</button>
+                  ),
                   default: (
-                    <span></span>
+                    <span className="button done">Done</span>                    
                   )
                 }[actionInfo]}
               </div>
