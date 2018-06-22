@@ -147,7 +147,7 @@ class MyBetsList extends React.Component {
           let isBetTaken = bet.taken;
           let waitingForGameOutcome = bet.gameResult === -1; // moment.utc(game.dateTime) < dateTimeNowWithGameEndOffset
           let betHasResult = bet.gameResult > 0;
-          let isUserWinner = bet.bettingOn.indexOf(bet.gameResult.toString()) !== -1;
+          let isUserWinner = bet.gameResult ? bet.bettingOn.indexOf(bet.gameResult.toString()) !== -1 : false;
           let eatenABet = bet.bettingOn.length > 1;
 
           if (isBetTaken) { 
