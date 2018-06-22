@@ -24,7 +24,10 @@ class MyBetsList extends React.Component {
 
   componentDidMount() {
     const { contract, web3 } = this.props;
+    this.load(contract, web3);
+  }
 
+  load(contract, web3) {
     contract.getPastEvents('PoolCreated', {
       filter: { creator: web3.eth.defaultAccount },
       fromBlock: 0
@@ -71,17 +74,25 @@ class MyBetsList extends React.Component {
     });
   }
 
-  getResults(betPoolId) {
-    const { contract } = this.props;
-
-    contract.methods.betPools(betPoolId).call()
-      .then(response => {
-        const result = response.result;
-        console.log('Result is: ', result);
-
-        if (result === 0) {
-          alert("No results yet!");
-        }
+  withdraw(betPoolId) {
+    const { contract, web3 } = this.props;
+    contract.methods.claimBetRewards([betPoolId]).send({from: web3.eth.defaultAccount})
+      .then(tx => {
+        this.setState({mining: true})
+        getTransactionReceiptMined(web3, tx.transactionHash)
+          .then(() => {
+            this.load(contract, web3);
+            this.setState({ mining: false });
+          })
+          .catch(() => {
+            alert("Transaction has failed, please try again.");
+            this.setState({ mining: false });
+          })
+      })
+      .catch((error) => {
+        console.log(error);
+        alert("Invalid transaction, something is wrong here...");
+        this.setState({ mining: false });
       })
   }
 
@@ -207,7 +218,7 @@ class MyBetsList extends React.Component {
                     <span className="button waiting">Waiting...</span>
                   ),
                   'collect': (
-                    <button className="collect" onClick={() => this.getResults(bet.betPoolId)}>Collect</button>
+                    <button className="collect" onClick={() => this.withdraw(bet.betPoolId)}>Collect</button>
                   ),
                   default: (
                     <span></span>
