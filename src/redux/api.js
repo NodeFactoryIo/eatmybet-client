@@ -8,3 +8,7 @@ export const fetchContracts = () => getResponse(makeRequest(
 export const fetchGames = () => getResponse(makeRequest(
   apiEndpoint + '/fixtures-01', getRequest()
 ));
+
+export const fetchGameResult = (gameId) => getResponse(makeRequest(
+  apiEndpoint + `/fixtures-01/get-result?gameId=${gameId}`, getRequest()
+));

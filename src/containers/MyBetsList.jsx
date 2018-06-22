@@ -4,6 +4,7 @@ import moment from 'moment';
 import _ from 'lodash';
 import Loading from "../components/Loading";
 import { getTransactionReceiptMined } from '../util/transactions'
+import { fetchGameResult } from '../redux/api'
 
 const availableBets = ["1", "2", "3"];
 
@@ -53,14 +54,17 @@ class MyBetsList extends React.Component {
       } else {
         betPool.bettingOn = [betPool.bet];
         betPool.amount = betPool.poolSize;
-        betPool.taken = (await contract.methods.getBetPoolTakenAmount(betPoolId) > 0);
+        betPool.taken = await contract.methods.getBetPoolTakenAmount(betPoolId).call() > 0;
+      }
+      if(betPool.taken) {
+        let gameResult = await fetchGameResult(betPool.gameId);
+        betPool.gameResult = gameResult.r;
       }
       return {...betPool};
     });
     Promise.all(betsWithProperties).then(result => {
       //remove deleted bets
       result = result.filter(function(bet) {
-        console.log(bet);
         return !_.isEmpty(bet);
       })
       this.setState({ bets: [...this.state.bets, ...result]});
@@ -129,11 +133,10 @@ class MyBetsList extends React.Component {
           const game = _.filter(games, { gameId: bet.gameId})[0];
 
           let actionInfo = 'cancel';
-          let result = "1";
           let isBetTaken = bet.taken;
-          let waitingForGameOutcome = true; // moment.utc(game.dateTime) < dateTimeNowWithGameEndOffset
-          let betHasResult = !result;
-          let isUserWinner = bet.bettingOn.indexOf(result) !== -1;
+          let waitingForGameOutcome = bet.gameResult === -1; // moment.utc(game.dateTime) < dateTimeNowWithGameEndOffset
+          let betHasResult = bet.gameResult > 0;
+          let isUserWinner = bet.bettingOn.indexOf(bet.gameResult.toString()) !== -1;
 
           if (isBetTaken) { 
             actionInfo = 'none';
