@@ -109,9 +109,12 @@ html, body { font-size: 12px; font-family: sans-serif; width: 100%; color: #0F57
       .place-a-bet-wrap .game .action .place.active { color: #fff; text-align: center; line-height: 35px; }
       .place-a-bet-wrap .game .action .place.active:hover { color: #fff; background-color: #0970a0; }
 
+.place-a-bet-wrap .game .grid.info-amount-wrap, .eat-a-bet-wrap .game .grid.info-amount-wrap, .my-bets-wrap .game .grid.info-amount-wrap { margin-top: 1rem; text-align: center; font-size: 15px; }
+  .place-a-bet-wrap .game .grid.info-amount-wrap.hidden { display: none; }
+
 .eat-a-bet-wrap { max-width: 900px; margin: 0 auto; }
 
-  .eat-a-bet-wrap .empty { margin: 4rem 2rem; font-weight: 200; }
+  .eat-a-bet-wrap .empty { margin: 8rem 2rem; font-weight: 200; }
     .eat-a-bet-wrap .empty a.place { color: #0D87C0; font-weight: 400; }
 
 .eat-a-bet-wrap .game .grid-pad-small { margin: 0 -10px; }
@@ -132,6 +135,8 @@ html, body { font-size: 12px; font-family: sans-serif; width: 100%; color: #0F57
   .eat-a-bet-wrap .game button { border: 1px solid #b8bbc1; padding: 10px; display: block; font-size: 1.5rem; overflow: hidden; background: none; border-radius: 6px; text-align: left; width: 100%; }
   .eat-a-bet-wrap .game .info button.draw { text-align: center; line-height: 35px; }
   .eat-a-bet-wrap .game .info button:hover { cursor: default; }
+
+  .eat-a-bet-wrap .game .info button.inactive { border-color: #CC668A; background-color: #CC668A; color: #fff; }
   /*.eat-a-bet-wrap .game button:hover, .eat-a-bet-wrap .game button.active { background-color:  #0D87C0; color: #fff; }*/
 
   .eat-a-bet-wrap .game .actions { text-align: center; }
@@ -152,6 +157,10 @@ html, body { font-size: 12px; font-family: sans-serif; width: 100%; color: #0F57
 
 
 .my-bets-wrap { max-width: 900px; margin: 0 auto; }
+
+  .my-bets-wrap .empty { margin: 8rem 2rem; font-weight: 200; }
+    .my-bets-wrap .empty a.place { color: #0D87C0; font-weight: 400; }
+    .my-bets-wrap .empty a.eat { color: #CC668A; font-weight: 400; }
 
     .my-bets-wrap .game .grid-pad-small { margin: 0 -10px; }
       .my-bets-wrap .game [class*=col-] { margin-bottom: 0; }

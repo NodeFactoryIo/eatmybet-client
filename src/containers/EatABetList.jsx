@@ -4,6 +4,7 @@ import React from 'react';
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 import Loading from "../components/Loading";
+import InfoAmountComponent from "./InfoAmountComponent";
 import { getTransactionReceiptMined } from "../util/transactions";
 
 
@@ -125,7 +126,7 @@ render() {
   if ((_.isEmpty(betPools) || noBetsForExistingGames) && betsLoaded) {
     return (
       <div className="eat-a-bet-wrap">
-        <h2 class="empty">There are no active bets, but you can <a class="place" href="/">place a bet</a></h2>
+        <h2 className="empty">There are no active bets, but you can <a className="place" href="/">place a bet</a></h2>
       </div>
     )
   }
@@ -207,6 +208,7 @@ render() {
                           </button>
                         </div>
                       </div>
+                      <InfoAmountComponent bet={bet.bet} coef={bet.coef} amount={defaultAmount} eating={true} />
                     </div>
 
                     <div className="action disabled col-1-4">

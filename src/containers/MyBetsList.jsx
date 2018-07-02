@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import moment from 'moment';
 import _ from 'lodash';
 import Loading from "../components/Loading";
+import InfoAmountComponent from "./InfoAmountComponent";
 import { getTransactionReceiptMined } from '../util/transactions'
 import { fetchGameResult } from '../redux/api'
 
@@ -134,7 +135,7 @@ class MyBetsList extends React.Component {
     }
     if (bets.length === 0) {
       return (
-        <div className="my-bets-wrap"><h2>You have no bets, but you can <a class="place" href="/">place a bet</a> or <a class="eat" href="/eat-a-bet">eat abet</a></h2></div>
+        <div className="my-bets-wrap"><h2 className="empty">You have no bets, but you can <a className="place" href="/">place a bet</a> or <a className="eat" href="/eat-a-bet">eat a bet</a></h2></div>
       )
     }
 
@@ -195,6 +196,8 @@ class MyBetsList extends React.Component {
                     </button>
                   </div>
                 </div>
+
+                <InfoAmountComponent bet={bet.bet} coef={bet.coef} amount={bet.amount} eating={eatenABet} />
               </div>
 
               <div className="action col-1-4">

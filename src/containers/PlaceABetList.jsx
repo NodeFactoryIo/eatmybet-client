@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import moment from 'moment';
 import { Redirect } from "react-router-dom";
 import Loading from "../components/Loading";
+import InfoAmountComponent from "./InfoAmountComponent";
 import { getTransactionReceiptMined } from "../util/transactions";
 
 
@@ -62,6 +63,8 @@ class PlaceABetList extends React.Component {
     const { contract, web3 } = this.props;
     const gameBet = this.getGameById(gameId);
 
+    console.log(gameId, gameBet.amount, gameBet.bet, parseInt(gameBet.coef * 100, 10));
+
     contract.methods.makeBet(gameId, gameBet.bet, parseInt(gameBet.coef * 100, 10))
       .send({value: gameBet.amount, from: web3.eth.defaultAccount })
       .then(tx => {
@@ -82,6 +85,7 @@ class PlaceABetList extends React.Component {
   }
 
   render() {
+    const { web3 } = this.props;
     const { games } = this.props;
     const { bettingGames, mining, toMyBets } = this.state;
     const minGameDateTime = moment.utc().add({ hours: 2});
@@ -104,9 +108,13 @@ class PlaceABetList extends React.Component {
             return '';
           }
 
+          const contractGame = this.getGameById(game.gameId);
+          
           const playedBet = !!this.getGameById(game.gameId);
           const validateBet = !!this.getGameById(game.gameId) &&
             this.getGameById(game.gameId).coef > 0 && this.getGameById(game.gameId).amount > 0;
+
+          const amount = validateBet ? web3.utils.fromWei(contractGame.amount, 'ether') : 0;
 
           return (
           <div className="place-a-bet game" key={index}>
@@ -149,6 +157,8 @@ class PlaceABetList extends React.Component {
                     </button>
                   </div>
                 </div>
+                { validateBet ?
+                  <InfoAmountComponent bet={contractGame.bet} coef={contractGame.coef * 100} amount={amount} /> : null }
               </div>
 
               <div className="action col-1-4">
